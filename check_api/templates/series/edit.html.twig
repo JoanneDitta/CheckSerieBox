@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+<style>
+</style>
+
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px;">
+    <h1>Modifier la série</h1>
+    <a href="{{ path('series_index') }}" class="btn btn-info text-white">Retour à la liste</a>
+</div>
+
+<form method="POST">
+    <div style="padding-bottom: 5px;">
+        <input type="text" name="name" value="{{ serie.name }}">
+    </div>
+    <div style="padding-bottom: 5px;">
+        <input type="text" name="poster" value="{{ serie.poster }}">
+    </div>
+    <div style="padding-bottom: 5px;">
+        <input type="number" name="date" value="{{ serie.date }}">
+    </div>
+    <div style="padding-bottom: 5px;">
+        <input type="text" name="platform" value="{{ serie.platform }}">
+    </div>
+    <div style="padding-bottom: 5px;">
+        <input type="number" name="nbSeason" value="{{ serie.nb_season }}">
+    </div>
+    <div style="padding-bottom: 5px;">
+        <input type="text" name="comment" value="{{ serie.comment }}">
+    </div>
+    {# <input type="text" name="status" value="{{ serie.status }}"> #}
+    <div style="padding-bottom: 5px;">
+        <select name="status" id="status_select">
+            <option value={{ serie.status }}>{{ serie.status }}</option>
+            <option value="finie">Finie</option>
+            <option value="annulee">Annulée</option>
+            <option value="en_production">En production</option>
+            <option value="en_diffusion">En cours de diffusion</option>
+            <option value="a_venir">À venir</option>
+        </select>
+        {# <input type="text" name="status" placeholder="Statut"> #}
+    </div>
+    <div style="padding-bottom: 5px;">
+        <button type="submit" class="btn btn-success">Modifier</button>
+    </div>
+</form>
+
+{% endblock %}
