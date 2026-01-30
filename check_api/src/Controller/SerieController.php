@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Serie;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -22,7 +25,7 @@ final class SerieController extends AbstractController
     {
         $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
         return $this->render('series/index.html.twig', [
-            'title' => 'Letterboxd Séries',
+            'title' => 'CheckSérieBox',
             'series' => $series
         ]);
     }
@@ -35,22 +38,22 @@ final class SerieController extends AbstractController
             // On crée une nouvelle série
             $data = $request->request;
             $serie = new Serie();
-            $serie->setName($data->get('name'));
-            $serie->setPoster($data->get('poster'));
+            $serie->setTitle($data->get('title'));
+            $serie->setPosterUrl($data->get('posterUrl'));
             $serie->setType($data->get('type'));
             $serie->setCountry($data->get('country'));
-            $serie->setDate($data->get('date'));
+            $serie->setReleaseDate($data->get('releaseDate'));
             $serie->setPlatform($data->get('platform'));
             $serie->setNbSeason($data->get('nbSeason'));
-            $serie->setComment($data->get('comment'));
+            $serie->setSynopsis($data->get('synopsis'));
             $serie->setStatus($data->get('status'));
 
             $em->persist($serie);
             $em->flush();
 
-            return $this->redirectToRoute('series_index', [$this->addFlash('success', 'Votre ingrédient a bien été créé avec succès !')]); // redirection vers la page principale avec message de succès
+            return $this->redirectToRoute('series_index', [$this->addFlash('success', 'Votre série a bien été ajoutée !')]); // redirection vers la page principale avec message de succès
         }
-        return $this->render('series/add.html.twig', ['title' => 'Letterboxd Séries / Add']); // afficher le formulaire
+        return $this->render('series/add.html.twig', ['title' => 'CheckSérieBox / Add']); // afficher le formulaire
     }
 
     // --------------- EDIT A SERIE ---------------
@@ -64,12 +67,14 @@ final class SerieController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = $request->request;
-            $serie->setName($data->get('name'));
-            $serie->setPoster($data->get('poster'));
-            $serie->setDate($data->get('date'));
+            $serie->setTitle($data->get('title'));
+            $serie->setPosterUrl($data->get('posterUrl'));
+            $serie->setType($data->get('type'));
+            $serie->setCountry($data->get('country'));
+            $serie->setReleaseDate($data->get('releaseDate'));
             $serie->setPlatform($data->get('platform'));
             $serie->setNbSeason($data->get('nbSeason'));
-            $serie->setComment($data->get('comment'));
+            $serie->setSynopsis($data->get('synopsis'));
             $serie->setStatus($data->get('status'));
 
             $em->flush(); // mise à jour en bdd
@@ -78,7 +83,7 @@ final class SerieController extends AbstractController
         }
 
         return $this->render('series/edit.html.twig', [
-            'title' => 'Letterboxd Séries / Edit',
+            'title' => 'CheckSérieBox / Edit',
             'serie' => $serie
         ]);
     }

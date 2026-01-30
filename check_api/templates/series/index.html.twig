@@ -26,19 +26,25 @@
         width: fit-content;
         margin-bottom: 100px;
     }
-    .card {
+    /* .card {
+    }
+    .card:hover {
+    } */
+    .cardPoster {
         position: relative;
-        border-radius: 3%;
+        border-radius: 4%;
         border: solid 1px #666666;
         box-shadow: 0 5px 10px #14181c;
         margin: 2px;
-        height: 225px;
+        height: fit-content;
+        width: fit-content;
     }
-    .card:hover {
-        border: solid 3px #dadada;
+    .cardPoster:hover {
+        border: solid 3px #ffffff;
         margin: 0;
     }
     .poster{
+        border-radius: 3%;
         height: 225px;
         width: 150px;
     }
@@ -53,29 +59,27 @@
     </div>
 {% endfor %}
 
-<div style="display: flex; justify-content: space-between;; align-items: center; padding-bottom: 25px;">
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px;">
     <h1>Liste des séries</h1>
     <a href="{{ path('serie_add') }}" class="btn btn-primary">Ajouter une série</a>
 </div>
 
 <ul class="listCards">
     {% for serie in series %}
-        <li class="card">
-        {# <li>
-            <div class="card"> #}
-                <article class="cardPoster">
-                    <img class="poster" src={{ serie.poster }} alt={`poster_{{ serie.name }}`} />
-                    {# <h1 className="serieTitle">{{ serie.name }}</h1> #}
-                </article>
-                <div class="d-flex justify-content-around align-items-center">
-                    <a href="{{ path('serie_edit', {id: serie.id}) }}" class="">
-                        <img src={{ asset('Images/edit.png') }} style="width: 13px; height: 13px;" alt="edit" />
-                    </a>
-                    <a href="{{ path('serie_delete', {id: serie.id}) }}" class="">
-                        <img src={{ asset('Images/delete.png') }} style="width: 13px; height: 13px;" alt="delete" />
-                    </a>
-                </div>
-            {# </div> #}
+        {# <li class="card"> #}
+        <li class="bg-dark">
+            <article class="cardPoster">
+                <img class="poster" src={{ serie.posterUrl }} alt={`poster_{{ serie.title }}`} />
+                {# <h1 className="serieTitle">{{ serie.name }}</h1> #}
+            </article>
+            <div class="d-flex justify-content-around align-items-center">
+                <a href="{{ path('serie_edit', {id: serie.id}) }}" class="">
+                    <img src={{ asset('Images/edit.png') }} style="width: 13px; height: 13px;" alt="edit" />
+                </a>
+                <a href="{{ path('serie_delete', {id: serie.id}) }}" class="">
+                    <img src={{ asset('Images/delete.png') }} style="width: 13px; height: 13px;" alt="delete" />
+                </a>
+            </div>
         </li>
     {% endfor %}
 </ul>
@@ -97,14 +101,14 @@
     {% for serie in series %}
         <tr>
             <td>{{ serie.id }}</td>
-            <td>{{ serie.name }}</td>
-            <td><img src={{ serie.poster }} style="max-height: 100px" alt={{ serie.name }} /></td>
+            <td>{{ serie.title }}</td>
+            <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
             <td>{{ serie.type }}</td>
             <td>{{ serie.country }}</td>
-            <td>{{ serie.date }}</td>
+            <td>{{ serie.releaseDate }}</td>
             <td>{{ serie.platform }}</td>
-            <td>{{ serie.nb_Season }}</td>
-            <td>{{ serie.comment }}</td>
+            <td>{{ serie.nbSeason }}</td>
+            <td>{{ serie.synopsis }}</td>
             <td>{{ serie.status }}</td>
 
             {# {% if is_granted('ROLE_ADMIN') %} #}
