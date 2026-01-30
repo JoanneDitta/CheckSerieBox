@@ -24,14 +24,14 @@ final class SerieController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
-        return $this->render('series/index.html.twig', [
+        return $this->render('serie/index.html.twig', [
             'title' => 'CheckSérieBox',
             'series' => $series
         ]);
     }
 
     // --------------- ADD A SERIE ---------------
-    #[Route("/add", name: "serie_add")]
+    #[Route("/admin/add", name: "serie_add")]
     public function add(Request $request, EntityManagerInterface $em): Response
     {
         if ($request->isMethod('POST')) {
@@ -53,11 +53,11 @@ final class SerieController extends AbstractController
 
             return $this->redirectToRoute('series_index', [$this->addFlash('success', 'Votre série a bien été ajoutée !')]); // redirection vers la page principale avec message de succès
         }
-        return $this->render('series/add.html.twig', ['title' => 'CheckSérieBox / Add']); // afficher le formulaire
+        return $this->render('serie/add.html.twig', ['title' => 'CheckSérieBox / Add']); // afficher le formulaire
     }
 
     // --------------- EDIT A SERIE ---------------
-    #[Route("/edit/{id}", name: "serie_edit")]
+    #[Route("/admin/edit/{id}", name: "serie_edit")]
     public function edit($id, Request $request, EntityManagerInterface $em): Response
     {
         $serie = $em->getRepository(Serie::class)->find($id);
@@ -82,14 +82,14 @@ final class SerieController extends AbstractController
             return $this->redirectToRoute('series_index');
         }
 
-        return $this->render('series/edit.html.twig', [
+        return $this->render('serie/edit.html.twig', [
             'title' => 'CheckSérieBox / Edit',
             'serie' => $serie
         ]);
     }
 
     // --------------- DELETE A SERIE ---------------
-    #[Route("/delete/{id}", name: "serie_delete")]
+    #[Route("/admin/delete/{id}", name: "serie_delete")]
     public function delete($id, EntityManagerInterface $em): Response
     {
         $serie = $em->getRepository(Serie::class)->find($id);

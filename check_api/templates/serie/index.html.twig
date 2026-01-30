@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %}
 
 {% block title %}Hello SerieController!{% endblock %}
 
@@ -17,4 +17,154 @@
         <li>Your template at <code>C:/Users/joann/Documents/GitHub/CheckSerieBox/check_api/templates/serie/index.html.twig</code></li>
     </ul>
 </div>
+{% endblock %} #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+<style>
+    li {
+        list-style-type: none;
+    }
+    ul {
+        padding: 0%;
+    }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    th, td { padding-left: 10px; padding-right: 25px; }
+    .poster { height: 225px; width: 150px;}
+    .listCards {
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-gap: 5px;
+        grid-auto-rows: minmax(100px, auto);
+        position: relative;
+        width: fit-content;
+        margin-bottom: 100px;
+    }
+    /* .card {
+    }
+    .card:hover {
+    } */
+    .cardPoster {
+        position: relative;
+        border-radius: 4%;
+        border: solid 1px #666666;
+        box-shadow: 0 5px 10px #14181c;
+        margin: 2px;
+        height: fit-content;
+        width: fit-content;
+    }
+    .cardPoster:hover {
+        border: solid 3px #ffffff;
+        margin: 0;
+    }
+    .poster{
+        border-radius: 3%;
+        height: 225px;
+        width: 150px;
+    }
+    .serieTitle{
+        position: absolute;
+    }
+</style>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<header class="mb-5 px-5 py-2 bg-black d-flex justify-content-between align-items-center">
+    <h1>CheckSérieBox</h1>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <a href={{ path('app_logout') }} class="btn btn-info text-white">Logout</a>
+    {% else %}
+        <div class="d-flex justify-content-between align-items-center gap-3">
+            <a href={{ path('app_login') }} class="btn btn-info text-white">Login</a>
+            <a href={{ path('app_register') }} class="btn btn-info text-white">Sign in</a>
+        </div>
+    {% endif %}
+</header>
+
+<main class="px-5">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px;">
+        <h2>Liste des séries</h2>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('serie_add') }}" class="btn btn-primary">Ajouter une série</a>
+        {% endif %}
+    </div>
+
+    <ul class="listCards">
+        {% for serie in series %}
+            {# <li class="card"> #}
+            <li class="bg-dark">
+                <article class="cardPoster">
+                    <img class="poster" src={{ serie.posterUrl }} alt={`poster_{{ serie.title }}`} />
+                    {# <h1 className="serieTitle">{{ serie.name }}</h1> #}
+                </article>
+                {# <div class="d-flex justify-content-around align-items-center">
+                    <a href="{{ path('serie_edit', {id: serie.id}) }}" class="">
+                        <img src={{ asset('Images/edit.png') }} style="width: 13px; height: 13px;" alt="edit" />
+                    </a>
+                    <a href="{{ path('serie_delete', {id: serie.id}) }}" class="">
+                        <img src={{ asset('Images/delete.png') }} style="width: 13px; height: 13px;" alt="delete" />
+                    </a>
+                </div> #}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <table class="table table-dark table-striped">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Poster</th>
+                <th>Type</th>
+                <th>Country</th>
+                <th>Date</th>
+                <th>Platform</th>
+                <th>Season</th>
+                <th>Comment</th>
+                <th>Status</th>
+            </tr>
+            {% for serie in series %}
+                <tr>
+                    <td>{{ serie.id }}</td>
+                    <td>{{ serie.title }}</td>
+                    <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
+                    <td>{{ serie.type }}</td>
+                    <td>{{ serie.country }}</td>
+                    <td>{{ serie.releaseDate }}</td>
+                    <td>{{ serie.platform }}</td>
+                    <td>{{ serie.nbSeason }}</td>
+                    <td>{{ serie.synopsis }}</td>
+                    <td>{{ serie.status }}</td>
+
+                    {# {% if is_granted('ROLE_ADMIN') %} #}
+                        <td class="">
+                            <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
+                                <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
+                            </a>
+                        </td>
+                        <td class="">
+                            <a href="{{ path('serie_delete', {id: serie.id}) }}" class="btn btn-danger">
+                                <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
+                            </a>
+                        </td>
+                    {# {% endif %} #}
+
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+</main>
+
 {% endblock %}
