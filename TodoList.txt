@@ -1,0 +1,8 @@
+- Barre de recherche
+- Filtres :
+  - Ordre
+  - 1 élément
+
+- Watchlist
+- Liste des séries vu
+- Diary des sorties

@@ -35,17 +35,76 @@
         text-decoration: none;
         color: inherit;
     }
+    .truncate-4 {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;   /* nombre de lignes */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .filters {
+        border-bottom: solid 1px grey;
+    }
+    .filter-container {
+        position: relative;
+        display: inline-block;
+    }
+    .filter-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .filter-label:hover {
+        /* color: rgb(166, 166, 166); */
+        /* background: #222; */
+        opacity: 75%;
+    }
+    .filter-icon {
+        width: 12px;
+        height: 12px;
+        transition: transform 0.3s ease;
+    }
+    .filter-label select:focus + .filter-icon,
+    .filter-label select:active + .filter-icon {
+        transform: rotate(-180deg);
+    }
+
+    /* Select stylé */
+    .filter-label select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        padding-left: 5px;
+        cursor: pointer;
+        width: fit-content;
+    }
+    .filter-label option {
+        background-color: #373b3f;
+    }
+
     th, td { padding-left: 10px; padding-right: 25px; }
-    .poster { height: 225px; width: 150px;}
+    .poster { height: 220px; width: 150px;}
     .listCards {
         margin: auto;
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         grid-gap: 5px;
         grid-auto-rows: minmax(100px, auto);
         position: relative;
         width: fit-content;
         margin-bottom: 100px;
+    }
+    .carousel-item {
+        display: none;
     }
     /* .card {
     }
@@ -57,7 +116,7 @@
         border: solid 1px #666666;
         box-shadow: 0 5px 10px #14181c;
         margin: 2px;
-        height: fit-content;
+        /* height: fit-content; */
         width: fit-content;
     }
     .cardPoster:hover {
@@ -80,8 +139,17 @@
     </div>
 {% endfor %}
 
+{% set filterOptions = {
+    'type': types,
+    'country': countries,
+    'release_date': release_dates,
+    'platform': platforms,
+    'nb_season': nb_seasons,
+    'status': status,
+} %}
+
 <header class="mb-5 px-5 py-2 bg-black d-flex justify-content-between align-items-center">
-    <h1>CheckSérieBox</h1>
+    <h1>CheckSerieBox</h1>
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <a href={{ path('app_logout') }} class="btn btn-info text-white">Logout</a>
     {% else %}
@@ -93,78 +161,295 @@
 </header>
 
 <main class="px-5">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px;">
-        <h2>Liste des séries</h2>
+    <div style="">
+        <h2 class="mb-5">Serie's list</h2>
         {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('serie_add') }}" class="btn btn-primary">Ajouter une série</a>
+        {% else %}
+            <form id="filtersList" class="filters d-flex justify-content-between align-items-center gap-3 mb-3">
+                <p class="m-0">Filters</p>
+                <div>
+                    {% for name, options in filterOptions %}
+                        <div class="filter-container">
+                            <label class="filter-label">
+                                <select name="{{ name }}">
+                                    <option value="">{{ name|capitalize|replace({'_': ' '}) }}</option>
+                                    {% for option in options %}
+                                        <option value="{{ option|lower }}">{{ option|capitalize }}</option>
+                                    {% endfor %}
+                                </select>
+                                <svg class="filter-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                    <path d="M165.6 349.8c-1.4 1.3-3.5 2.2-5.6 2.2s-4.2-.8-5.6-2.2L34.2 236.3c-1.4-1.3-2.2-3.2-2.2-5.2c0-3.9 3.2-7.1 7.1-7.1l241.7 0c3.9 0 7.1 3.2 7.1 7.1c0 2-.8 3.8-2.2 5.2L165.6 349.8zm22 23.3L307.7 259.6c7.8-7.4 12.3-17.7 12.3-28.4c0-21.6-17.5-39.1-39.1-39.1L39.1 192C17.5 192 0 209.5 0 231.1c0 10.8 4.4 21.1 12.3 28.5L132.4 373.1c7.4 7 17.3 10.9 27.6 10.9s20.1-3.9 27.6-10.9z"/>
+                                </svg>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
         {% endif %}
     </div>
 
-    <ul class="listCards">
-        {% for serie in series %}
-            {# <li class="card"> #}
-            <li class="bg-dark">
-                <article class="cardPoster">
-                    <img class="poster" src={{ serie.posterUrl }} alt={`poster_{{ serie.title }}`} />
-                    {# <h1 className="serieTitle">{{ serie.name }}</h1> #}
-                </article>
-                {# <div class="d-flex justify-content-around align-items-center">
-                    <a href="{{ path('serie_edit', {id: serie.id}) }}" class="">
-                        <img src={{ asset('Images/edit.png') }} style="width: 13px; height: 13px;" alt="edit" />
-                    </a>
-                    <a href="{{ path('serie_delete', {id: serie.id}) }}" class="">
-                        <img src={{ asset('Images/delete.png') }} style="width: 13px; height: 13px;" alt="delete" />
-                    </a>
-                </div> #}
-            </li>
-        {% endfor %}
-    </ul>
-
     {% if is_granted('ROLE_ADMIN') %}
-        <table class="table table-dark table-striped">
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Poster</th>
-                <th>Type</th>
-                <th>Country</th>
-                <th>Date</th>
-                <th>Platform</th>
-                <th>Season</th>
-                <th>Comment</th>
-                <th>Status</th>
-            </tr>
-            {% for serie in series %}
-                <tr>
-                    <td>{{ serie.id }}</td>
-                    <td>{{ serie.title }}</td>
-                    <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
-                    <td>{{ serie.type }}</td>
-                    <td>{{ serie.country }}</td>
-                    <td>{{ serie.releaseDate }}</td>
-                    <td>{{ serie.platform }}</td>
-                    <td>{{ serie.nbSeason }}</td>
-                    <td>{{ serie.synopsis }}</td>
-                    <td>{{ serie.status }}</td>
+        {# <form id="filtersTable" class="filters d-flex justify-content-between align-items-center gap-3 my-5">
+            <p class="m-0">Filters</p>
+            <div>
+                {% for name, options in filterOptions %}
+                    <div class="filter-container">
+                        <label class="filter-label">{{ name|capitalize|replace({'_': ' '}) }}</label>
+                        <select class="filter-label" name="{{ name }}">
+                        <select class="" name="{{ name }}">
+                            <option value="">{{ name|capitalize|replace({'_': ' '}) }}</option>
+                            {% for option in options %}
+                                <option value="{{ option|lower }}">{{ option|capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                        <svg class="filter-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                            <path d="M165.6 349.8c-1.4 1.3-3.5 2.2-5.6 2.2s-4.2-.8-5.6-2.2L34.2 236.3c-1.4-1.3-2.2-3.2-2.2-5.2c0-3.9 3.2-7.1 7.1-7.1l241.7 0c3.9 0 7.1 3.2 7.1 7.1c0 2-.8 3.8-2.2 5.2L165.6 349.8zm22 23.3L307.7 259.6c7.8-7.4 12.3-17.7 12.3-28.4c0-21.6-17.5-39.1-39.1-39.1L39.1 192C17.5 192 0 209.5 0 231.1c0 10.8 4.4 21.1 12.3 28.5L132.4 373.1c7.4 7 17.3 10.9 27.6 10.9s20.1-3.9 27.6-10.9z"/>
+                        </svg>
+                    </div>
+                {% endfor %}
+            </div>
+        </form> #}
 
-                    {# {% if is_granted('ROLE_ADMIN') %} #}
-                        <td class="">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Poster</th>
+                    <th>Type</th>
+                    <th>Pays</th>
+                    <th>Date</th>
+                    <th>Plateforme</th>
+                    <th>Saison</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody class="tableSerie">
+                {% for serie in series %}
+                    <tr>
+                        <td>{{ serie.id }}</td>
+                        <td>{{ serie.title }}</td>
+                        <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
+                        <td>{{ serie.type|capitalize|replace({'_': ' '}) }}</td>
+                        <td>{{ serie.country }}</td>
+                        <td>{{ serie.releaseDate }}</td>
+                        <td>{{ serie.platform }}</td>
+                        <td>{{ serie.nbSeason }}</td>
+                        <td>{{ serie.status|capitalize|replace({'_': ' '}) }}</td>
+                        <td><span class="truncate-4" style="max-width: 200px;">{{ serie.synopsis }}</span></td>
+                        <td>
                             <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
                                 <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
                             </a>
                         </td>
-                        <td class="">
+                        <td>
                             <a href="{{ path('serie_delete', {id: serie.id}) }}" class="btn btn-danger">
                                 <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
                             </a>
                         </td>
-                    {# {% endif %} #}
-
-                </tr>
-            {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
+    {% else %}
+        <div class="carousel-container">
+            <div class="carousel-controls mx-auto w-50 d-flex justify-content-around align-items-center mb-4">
+                <button id="prevBtn" class="btn btn-secondary py-1">←</button>
+                <span id="pageIndicator">currentPage </span>
+                <button id="nextBtn" class="btn btn-secondary py-0">→</button>
+            </div>
+            <ul class="listCards" id="carousel">
+                {% for serieRandom in seriesRandomLimited %}
+                    <li class="bg-dark carousel-item">
+                        <article class="cardPoster">
+                            <img class="poster" src={{ serieRandom.poster_url }} alt={`poster {{ serieRandom.title }}`} />
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endif %}
 
 </main>
+
+<script>
+
+    // -------------------- Carrousel de séries --------------------
+    const itemsPerPage = 24;
+    let currentPage = 0;
+
+    function getItems() {
+        return document.querySelectorAll('.carousel-item');
+    }
+
+    function getTotalPages() {
+        return Math.ceil(getItems().length / itemsPerPage);
+    }
+
+    const pageIndicator = document.getElementById('pageIndicator');
+
+    function updatePageIndicator() {
+        const totalPages = getTotalPages();
+        pageIndicator.textContent = `Page ${currentPage + 1} / ${totalPages}`;
+    }
+
+    function updateButtonsVisibility() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const totalPages = getTotalPages();
+
+        prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+        nextBtn.style.visibility = currentPage >= totalPages - 1 ? 'hidden' : 'visible';
+    }
+
+    function showPage(page) {
+        const items = getItems();
+        const start = page * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        items.forEach((item, index) => {
+            item.style.display = (index >= start && index < end) ? 'block' : 'none';
+        });
+
+        updatePageIndicator();
+        updateButtonsVisibility();
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        const totalPages = getTotalPages();
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    showPage(currentPage);
+
+
+    // -------------------- Filtres d'affichage séries --------------------
+
+    function updateList(series) {
+        const list = document.querySelector('.listCards');
+        if (!list) return;
+
+        list.innerHTML = '';
+        series.forEach(serie => {
+            list.insertAdjacentHTML('beforeend', `
+                <li class="bg-dark carousel-item">
+                    <article class="cardPoster">
+                        <img class="poster" src="${serie.posterUrl}" alt="${serie.title}">
+                    </article>
+                </li>
+            `);
+        });
+
+        currentPage = 0;
+        showPage(currentPage);
+    }
+
+    function updateTable(series) {
+        const tbody = document.querySelector('.tableSerie');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+        series.forEach(serie => {
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td>${serie.id}</td>
+                    <td>${serie.title}</td>
+                    <td><img src="${serie.posterUrl}" style="max-height:100px"></td>
+                    <td>${serie.type}</td>
+                    <td>${serie.country}</td>
+                    <td>${serie.releaseDate}</td>
+                    <td>${serie.platform}</td>
+                    <td>${serie.nbSeason}</td>
+                    <td>${serie.status}</td>
+                    <td class="truncate-4">${serie.synopsis}</td>
+                </tr>
+            `);
+        });
+    }
+
+    function updateView(series) {
+        if (document.querySelector('.listCards')) {
+            updateList(series);
+        }
+
+        if (document.querySelector('.tableSerie')) {
+            updateTable(series);
+        }
+    }
+
+    // function bindFilters(form) {
+    //     if (!form) return;
+
+    //     form.addEventListener('change', () => {
+    //         const params = new URLSearchParams(new FormData(form));
+
+    //         fetch('/api/series?' + params.toString())
+    //             .then(res => res.json())
+    //             .then(updateView)
+    //             .catch(console.error);
+    //     });
+    //     console.log([...new FormData(form)]);
+
+    // }
+
+    // bindFilters(document.getElementById('filtersList'));
+    // bindFilters(document.getElementById('filtersTable'));
+
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     const forms = document.querySelectorAll('#filtersList, #filtersTable');
+
+    //     forms.forEach(form => {
+    //         form.addEventListener('change', () => {
+    //             const data = new FormData(form);
+    //             const params = new URLSearchParams();
+
+    //             for (const [key, value] of data.entries()) {
+    //                 if (value !== '') {
+    //                     params.append(key, value);
+    //                 }
+    //             }
+
+    //             fetch('/api/series?' + params.toString())
+    //                 .then(res => res.json())
+    //                 .then(updateView)
+    //                 .catch(console.error);
+    //         });
+    //     });
+    // });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableForm = document.getElementById('filtersTable');
+
+        if (!tableForm) {
+            console.log('❌ filtersTable introuvable');
+            return;
+        }
+
+        console.log('✅ filtersTable trouvé');
+
+        tableForm.addEventListener('change', (e) => {
+            console.log('🔥 CHANGE déclenché sur filtersTable');
+            console.log('Champ modifié :', e.target.name, e.target.value);
+
+            const data = new FormData(tableForm);
+            console.log('📦 FormData :', [...data.entries()]);
+        });
+    });
+
+
+
+</script>
 
 {% endblock %}

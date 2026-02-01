@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class SerieController extends AbstractController
@@ -19,15 +20,56 @@ final class SerieController extends AbstractController
     //     ]);
     // }
 
-    // --------------- SHAOW ALL SERIEs ---------------
+    // --------------- SHOW ALL SERIEs ---------------
+    // #[Route("/", name: "series_index")]
+    // public function index(EntityManagerInterface $em): Response
+    // {
+    //     $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
+    //     return $this->render('serie/index.html.twig', [
+    //         'title' => 'CheckSérieBox',
+    //         'series' => $series
+    //     ]);
+    // }
     #[Route("/", name: "series_index")]
     public function index(EntityManagerInterface $em): Response
     {
         $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
+        $seriesRandomLimited = $em->getRepository(Serie::class)->findAllRandom(); // récupérer toutes les séries dans un ordre random
+        $types = $em->getRepository(Serie::class)->findDistinctTypes();
+        $countries = $em->getRepository(Serie::class)->findDistinctCountries();
+        $release_dates = $em->getRepository(Serie::class)->findDistinctRelease_dates();
+        $platforms = $em->getRepository(Serie::class)->findDistinctPlatforms();
+        $nb_seasons = $em->getRepository(Serie::class)->findDistinctNb_seasons();
+        $status = $em->getRepository(Serie::class)->findDistinctStatuts();
+
         return $this->render('serie/index.html.twig', [
             'title' => 'CheckSérieBox',
-            'series' => $series
+            'series' => $series,
+            'seriesRandomLimited' => $seriesRandomLimited,
+            'types' => $types,
+            'countries' => $countries,
+            'release_dates' => $release_dates,
+            'platforms' => $platforms,
+            'nb_seasons' => $nb_seasons,
+            'status' => $status,
         ]);
+    }
+
+    #[Route('/api/series', name: 'api_series', methods: ['GET'])]
+    public function filter(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $filters = [
+            'type' => $request->query->get('type'),
+            'country' => $request->query->get('country'),
+            'release_date' => $request->query->get('release_date'),
+            'platform' => $request->query->get('platform'),
+            'nb_season' => $request->query->get('nb_season'),
+            'status' => $request->query->get('status'),
+        ];
+
+        $series = $em->getRepository(Serie::class)->findByFilters($filters);
+
+        return $this->json($series);
     }
 
     // --------------- ADD A SERIE ---------------
