@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 final class SerieController extends AbstractController
 {
@@ -55,32 +57,38 @@ final class SerieController extends AbstractController
         ]);
     }
 
-    #[Route('/api/series', name: 'api_series', methods: ['GET'])]
-    public function filter(Request $request, EntityManagerInterface $em): JsonResponse
+    #[Route('/serie/{slug}', name: 'serie_show')]
+    public function display_a_serie(EntityManagerInterface $em, string $slug): Response
     {
-        $filters = [
-            'type' => $request->query->get('type'),
-            'country' => $request->query->get('country'),
-            'release_date' => $request->query->get('release_date'),
-            'platform' => $request->query->get('platform'),
-            'nb_season' => $request->query->get('nb_season'),
-            'status' => $request->query->get('status'),
-        ];
+        $serie = $em->getRepository(Serie::class)->findOneBy(["slug" => $slug]); // récupérer 1 série via son slug
 
-        $series = $em->getRepository(Serie::class)->findByFilters($filters);
+    if (!$serie) {
+        throw $this->createNotFoundException('Série non trouvée');
+    }
 
-        return $this->json($series);
+        return $this->render('serie/serie.html.twig', [
+            'title' => 'CheckSérieBox',
+            'serie' => $serie
+        ]);
     }
 
     // --------------- ADD A SERIE ---------------
     #[Route("/admin/add", name: "serie_add")]
-    public function add(Request $request, EntityManagerInterface $em): Response
+    public function add(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         if ($request->isMethod('POST')) {
+
             // On crée une nouvelle série
             $data = $request->request;
             $serie = new Serie();
-            $serie->setTitle($data->get('title'));
+
+            $title = $data->get('title');
+            $slug = $slugger
+                ->slug($data->get('title'))
+                ->lower();
+
+            $serie->setTitle($title);
+            $serie->setSlug($slug);
             $serie->setPosterUrl($data->get('posterUrl'));
             $serie->setType($data->get('type'));
             $serie->setCountry($data->get('country'));

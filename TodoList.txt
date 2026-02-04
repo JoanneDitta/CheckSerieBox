@@ -3,6 +3,9 @@
   - Ordre
   - 1 élément
 
+- Vue pour 1 série
+- Slug pour les URLs ex : /game-of-thrones au lieu de /Game of Thrones
+
 - Watchlist
 - Liste des séries vu
 - Diary des sorties

@@ -2,60 +2,65 @@
 
 {% block title %} {{ title }} {% endblock %}
 
+
 {% block body %}
-<style>
-</style>
 
-<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 25px;">
-    <h1>Ajouter une série</h1>
-    <a href="{{ path('series_index') }}" class="btn btn-info text-white">Retour à la liste</a>
-</div>
+    <style>
+        input, textarea {
+            width: 100%;
+        }
+    </style>
 
-<form method="POST">
-    <div style="padding-bottom: 5px;">
-        <input type="text" name="name" placeholder="Nom">
+    <div class="d-flex justify-content-between align-items-center pb-5">
+        <h2>Ajouter une série</h2>
+        <a href="{{ path('series_index') }}" class="btn btn-secondary text-white">← Retour à la liste</a>
     </div>
-    <div style="padding-bottom: 5px;">
-        <input type="url" name="poster" placeholder="Poster URL">
-    </div>
-    <div style="padding-bottom: 5px;">
-        {# <input type="text" name="type" placeholder="Type"> #}
-        <select name="type" id="type_select">
-            <option value="Série">Série</option>
-            <option value="Mini série">Mini série</option>
-            <option value="Web série">Web série</option>
-            <option value="Série d'animation">Série d'animation</option>
-            <option value="Émission">Émission</option>
-            <option value="K-drama">K-drama</option>
-            <option value="Anime">Anime</option>
-        </select>
-    </div>
-    <div style="padding-bottom: 5px;">
-        <input type="text" name="country" placeholder="Pays">
-    </div>
-    <div style="padding-bottom: 5px;">
-        <input type="number" name="date" placeholder="Date">
-    </div>
-    <div style="padding-bottom: 5px;">
-        <input type="text" name="platform" placeholder="Plateforme">
-    </div>
-    <div style="padding-bottom: 5px;">
-        <input type="number" name="nbSeason" placeholder="Nombre de saisons">
-    </div>
-    <div style="padding-bottom: 5px;">
-        <input type="text" name="comment" placeholder="Synopsis">
-    </div>
-    <div style="padding-bottom: 5px;">
-        <select name="status" id="status_select">
-            <option value="finie">Finie</option>
-            <option value="annulee">Annulée</option>
-            <option value="en_production">En production</option>
-            <option value="en_diffusion">En cours de diffusion</option>
-            <option value="a_venir">À venir</option>
-        </select>
-        {# <input type="text" name="status" placeholder="Statut"> #}
-    </div>
-    <button type="submit" class="btn btn-primary">Ajouter</button>
-</form>
+
+    <form method="POST">
+        <div>
+            <input type="text" name="title" placeholder="Nom">
+        </div>
+        <div>
+            <input type="url" name="poster_url" placeholder="Poster URL">
+        </div>
+        <div>
+            <select name="type" id="type_select">
+                <option value="Série">Type</option>
+                <option value="Série">Série</option>
+                <option value="Mini série">Mini série</option>
+                <option value="Web série">Web série</option>
+                <option value="Série d'animation">Série d'animation</option>
+                <option value="Émission">Émission</option>
+                <option value="K-drama">K-drama</option>
+                <option value="Anime">Anime</option>
+            </select>
+        </div>
+        <div>
+            <input type="text" name="country" placeholder="Pays">
+        </div>
+        <div>
+            <input type="number" name="release_date" placeholder="Date">
+        </div>
+        <div>
+            <input type="text" name="platform" placeholder="Plateforme">
+        </div>
+        <div>
+            <input type="number" name="nb_season" placeholder="Nombre de saisons">
+        </div>
+        <div>
+            <textarea type="text" name="synopsis" placeholder="Synopsis"></textarea>
+        </div>
+        <div>
+            <select name="status" id="status_select">
+                <option value="finie">Status</option>
+                <option value="finie">Finie</option>
+                <option value="annulee">Annulée</option>
+                <option value="en_production">En production</option>
+                <option value="en_diffusion">En cours de diffusion</option>
+                <option value="a_venir">À venir</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+    </form>
 
 {% endblock %}

@@ -148,131 +148,101 @@
     'status': status,
 } %}
 
-<header class="mb-5 px-5 py-2 bg-black d-flex justify-content-between align-items-center">
-    <h1>CheckSerieBox</h1>
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <a href={{ path('app_logout') }} class="btn btn-info text-white">Logout</a>
-    {% else %}
-        <div class="d-flex justify-content-between align-items-center gap-3">
-            <a href={{ path('app_login') }} class="btn btn-info text-white">Login</a>
-            <a href={{ path('app_register') }} class="btn btn-info text-white">Sign in</a>
-        </div>
-    {% endif %}
-</header>
-
-<main class="px-5">
-    <div style="">
-        <h2 class="mb-5">Serie's list</h2>
+<div style="">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="m-0">Serie's list</h2>
         {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('serie_add') }}" class="btn btn-primary">Ajouter une série</a>
-        {% else %}
-            <form id="filtersList" class="filters d-flex justify-content-between align-items-center gap-3 mb-3">
-                <p class="m-0">Filters</p>
-                <div>
-                    {% for name, options in filterOptions %}
-                        <div class="filter-container">
-                            <label class="filter-label">
-                                <select name="{{ name }}">
-                                    <option value="">{{ name|capitalize|replace({'_': ' '}) }}</option>
-                                    {% for option in options %}
-                                        <option value="{{ option|lower }}">{{ option|capitalize }}</option>
-                                    {% endfor %}
-                                </select>
-                                <svg class="filter-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                                    <path d="M165.6 349.8c-1.4 1.3-3.5 2.2-5.6 2.2s-4.2-.8-5.6-2.2L34.2 236.3c-1.4-1.3-2.2-3.2-2.2-5.2c0-3.9 3.2-7.1 7.1-7.1l241.7 0c3.9 0 7.1 3.2 7.1 7.1c0 2-.8 3.8-2.2 5.2L165.6 349.8zm22 23.3L307.7 259.6c7.8-7.4 12.3-17.7 12.3-28.4c0-21.6-17.5-39.1-39.1-39.1L39.1 192C17.5 192 0 209.5 0 231.1c0 10.8 4.4 21.1 12.3 28.5L132.4 373.1c7.4 7 17.3 10.9 27.6 10.9s20.1-3.9 27.6-10.9z"/>
-                                </svg>
-                            </label>
-                        </div>
-                    {% endfor %}
-                </div>
-            </form>
-        {% endif %}
     </div>
-
-    {% if is_granted('ROLE_ADMIN') %}
-        {# <form id="filtersTable" class="filters d-flex justify-content-between align-items-center gap-3 my-5">
+        {% else %}
+    </div>
+        <form id="filtersList" class="filters d-flex justify-content-between align-items-center gap-3 mb-3 w-100">
             <p class="m-0">Filters</p>
-            <div>
+            <div class="d-flex">
                 {% for name, options in filterOptions %}
                     <div class="filter-container">
-                        <label class="filter-label">{{ name|capitalize|replace({'_': ' '}) }}</label>
-                        <select class="filter-label" name="{{ name }}">
-                        <select class="" name="{{ name }}">
-                            <option value="">{{ name|capitalize|replace({'_': ' '}) }}</option>
-                            {% for option in options %}
-                                <option value="{{ option|lower }}">{{ option|capitalize }}</option>
-                            {% endfor %}
-                        </select>
-                        <svg class="filter-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                            <path d="M165.6 349.8c-1.4 1.3-3.5 2.2-5.6 2.2s-4.2-.8-5.6-2.2L34.2 236.3c-1.4-1.3-2.2-3.2-2.2-5.2c0-3.9 3.2-7.1 7.1-7.1l241.7 0c3.9 0 7.1 3.2 7.1 7.1c0 2-.8 3.8-2.2 5.2L165.6 349.8zm22 23.3L307.7 259.6c7.8-7.4 12.3-17.7 12.3-28.4c0-21.6-17.5-39.1-39.1-39.1L39.1 192C17.5 192 0 209.5 0 231.1c0 10.8 4.4 21.1 12.3 28.5L132.4 373.1c7.4 7 17.3 10.9 27.6 10.9s20.1-3.9 27.6-10.9z"/>
-                        </svg>
+                        <label class="filter-label">
+                            <select name="{{ name }}">
+                                <option value="">{{ name|capitalize|replace({'_': ' '}) }}</option>
+                                {% for option in options %}
+                                    <option value="{{ option|lower }}">{{ option|capitalize }}</option>
+                                {% endfor %}
+                            </select>
+                            <svg class="filter-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                <path d="M165.6 349.8c-1.4 1.3-3.5 2.2-5.6 2.2s-4.2-.8-5.6-2.2L34.2 236.3c-1.4-1.3-2.2-3.2-2.2-5.2c0-3.9 3.2-7.1 7.1-7.1l241.7 0c3.9 0 7.1 3.2 7.1 7.1c0 2-.8 3.8-2.2 5.2L165.6 349.8zm22 23.3L307.7 259.6c7.8-7.4 12.3-17.7 12.3-28.4c0-21.6-17.5-39.1-39.1-39.1L39.1 192C17.5 192 0 209.5 0 231.1c0 10.8 4.4 21.1 12.3 28.5L132.4 373.1c7.4 7 17.3 10.9 27.6 10.9s20.1-3.9 27.6-10.9z"/>
+                            </svg>
+                        </label>
                     </div>
                 {% endfor %}
             </div>
-        </form> #}
-
-        <table class="table table-dark table-striped">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Poster</th>
-                    <th>Type</th>
-                    <th>Pays</th>
-                    <th>Date</th>
-                    <th>Plateforme</th>
-                    <th>Saison</th>
-                    <th>Status</th>
-                    <th>Comment</th>
-                </tr>
-            </thead>
-            <tbody class="tableSerie">
-                {% for serie in series %}
-                    <tr>
-                        <td>{{ serie.id }}</td>
-                        <td>{{ serie.title }}</td>
-                        <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
-                        <td>{{ serie.type|capitalize|replace({'_': ' '}) }}</td>
-                        <td>{{ serie.country }}</td>
-                        <td>{{ serie.releaseDate }}</td>
-                        <td>{{ serie.platform }}</td>
-                        <td>{{ serie.nbSeason }}</td>
-                        <td>{{ serie.status|capitalize|replace({'_': ' '}) }}</td>
-                        <td><span class="truncate-4" style="max-width: 200px;">{{ serie.synopsis }}</span></td>
-                        <td>
-                            <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
-                                <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ path('serie_delete', {id: serie.id}) }}" class="btn btn-danger">
-                                <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="carousel-container">
-            <div class="carousel-controls mx-auto w-50 d-flex justify-content-around align-items-center mb-4">
-                <button id="prevBtn" class="btn btn-secondary py-1">←</button>
-                <span id="pageIndicator">currentPage </span>
-                <button id="nextBtn" class="btn btn-secondary py-0">→</button>
-            </div>
-            <ul class="listCards" id="carousel">
-                {% for serieRandom in seriesRandomLimited %}
-                    <li class="bg-dark carousel-item">
-                        <article class="cardPoster">
-                            <img class="poster" src={{ serieRandom.poster_url }} alt={`poster {{ serieRandom.title }}`} />
-                        </article>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+        </form>
     {% endif %}
+</div>
 
-</main>
+{% if is_granted('ROLE_ADMIN') %}
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Poster</th>
+                <th>Type</th>
+                <th>Pays</th>
+                <th>Date</th>
+                <th>Plateforme</th>
+                <th>Saison</th>
+                <th>Status</th>
+                <th>Comment</th>
+            </tr>
+        </thead>
+        <tbody class="tableSerie">
+            {% for serie in series %}
+                <tr>
+                    {# <td><a href="{{ path('serie_show', { slug: series.slug }) }}"><img scr={{ asset('Images/eye.png') }}  style="width: 15px; height: 15px;" /></a></td> #}
+                    <td>{{ serie.id }}</td>
+                    <td>{{ serie.title }}</td>
+                    <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
+                    <td>{{ serie.type|capitalize|replace({'_': ' '}) }}</td>
+                    <td>{{ serie.country }}</td>
+                    <td>{{ serie.releaseDate }}</td>
+                    <td>{{ serie.platform }}</td>
+                    <td>{{ serie.nbSeason }}</td>
+                    <td>{{ serie.status|capitalize|replace({'_': ' '}) }}</td>
+                    <td><span class="truncate-4" style="max-width: 200px;">{{ serie.synopsis }}</span></td>
+                    <td>
+                        <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
+                            <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('serie_delete', {id: serie.id}) }}" class="btn btn-danger">
+                            <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="carousel-container">
+        <div class="carousel-controls mx-auto w-50 d-flex justify-content-around align-items-center mb-4">
+            <button id="prevBtn" class="btn btn-secondary py-1">←</button>
+            <span id="pageIndicator"></span>
+            <button id="nextBtn" class="btn btn-secondary py-0">→</button>
+        </div>
+        <ul class="listCards" id="carousel">
+            {% for serieRandom in seriesRandomLimited %}
+                <li class="bg-dark carousel-item">
+                    <article class="cardPoster">
+                        <a href="{{ path('serie_show', { slug: serieRandom.slug }) }}">
+                            <img class="poster" src={{ serieRandom.poster_url }} alt={`poster {{ serieRandom.title }}`} />
+                        </a>
+                    </article>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 
 <script>
 
@@ -356,99 +326,18 @@
         showPage(currentPage);
     }
 
-    function updateTable(series) {
-        const tbody = document.querySelector('.tableSerie');
-        if (!tbody) return;
+    const filtersForm = document.getElementById('filtersList');
 
-        tbody.innerHTML = '';
-        series.forEach(serie => {
-            tbody.insertAdjacentHTML('beforeend', `
-                <tr>
-                    <td>${serie.id}</td>
-                    <td>${serie.title}</td>
-                    <td><img src="${serie.posterUrl}" style="max-height:100px"></td>
-                    <td>${serie.type}</td>
-                    <td>${serie.country}</td>
-                    <td>${serie.releaseDate}</td>
-                    <td>${serie.platform}</td>
-                    <td>${serie.nbSeason}</td>
-                    <td>${serie.status}</td>
-                    <td class="truncate-4">${serie.synopsis}</td>
-                </tr>
-            `);
-        });
-    }
+    filtersForm.addEventListener('change', () => {
+        const formData = new FormData(filtersForm);
+        const params = new URLSearchParams(formData);
 
-    function updateView(series) {
-        if (document.querySelector('.listCards')) {
-            updateList(series);
-        }
-
-        if (document.querySelector('.tableSerie')) {
-            updateTable(series);
-        }
-    }
-
-    // function bindFilters(form) {
-    //     if (!form) return;
-
-    //     form.addEventListener('change', () => {
-    //         const params = new URLSearchParams(new FormData(form));
-
-    //         fetch('/api/series?' + params.toString())
-    //             .then(res => res.json())
-    //             .then(updateView)
-    //             .catch(console.error);
-    //     });
-    //     console.log([...new FormData(form)]);
-
-    // }
-
-    // bindFilters(document.getElementById('filtersList'));
-    // bindFilters(document.getElementById('filtersTable'));
-
-    // document.addEventListener('DOMContentLoaded', () => {
-    //     const forms = document.querySelectorAll('#filtersList, #filtersTable');
-
-    //     forms.forEach(form => {
-    //         form.addEventListener('change', () => {
-    //             const data = new FormData(form);
-    //             const params = new URLSearchParams();
-
-    //             for (const [key, value] of data.entries()) {
-    //                 if (value !== '') {
-    //                     params.append(key, value);
-    //                 }
-    //             }
-
-    //             fetch('/api/series?' + params.toString())
-    //                 .then(res => res.json())
-    //                 .then(updateView)
-    //                 .catch(console.error);
-    //         });
-    //     });
-    // });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const tableForm = document.getElementById('filtersTable');
-
-        if (!tableForm) {
-            console.log('❌ filtersTable introuvable');
-            return;
-        }
-
-        console.log('✅ filtersTable trouvé');
-
-        tableForm.addEventListener('change', (e) => {
-            console.log('🔥 CHANGE déclenché sur filtersTable');
-            console.log('Champ modifié :', e.target.name, e.target.value);
-
-            const data = new FormData(tableForm);
-            console.log('📦 FormData :', [...data.entries()]);
-        });
+        fetch('/api/series?' + params.toString())
+            .then(res => res.json())
+            .then(data => {
+                updateList(data);
+            });
     });
-
-
 
 </script>
 
