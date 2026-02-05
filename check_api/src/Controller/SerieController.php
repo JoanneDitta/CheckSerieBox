@@ -149,4 +149,23 @@ final class SerieController extends AbstractController
         }
         return $this->redirectToRoute('series_index');
     }
+
+
+    #[Route('/api/series', name: 'api_series', methods: ['GET'])]
+    public function apiSeries(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $filters = [
+            'type' => $request->query->get('type'),
+            'country' => $request->query->get('country'),
+            'release_date' => $request->query->get('release_date'),
+            'platform' => $request->query->get('platform'),
+            'nb_season' => $request->query->get('nb_season'),
+            'status' => $request->query->get('status'),
+        ];
+
+        $series = $em->getRepository(Serie::class)->findByFilters($filters);
+
+        return $this->json($series);
+    }
+
 }

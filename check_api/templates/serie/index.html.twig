@@ -202,12 +202,12 @@
                     <td>{{ serie.id }}</td>
                     <td>{{ serie.title }}</td>
                     <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
-                    <td>{{ serie.type|capitalize|replace({'_': ' '}) }}</td>
+                    <td>{{ serie.type }}</td>
                     <td>{{ serie.country }}</td>
                     <td>{{ serie.releaseDate }}</td>
                     <td>{{ serie.platform }}</td>
                     <td>{{ serie.nbSeason }}</td>
-                    <td>{{ serie.status|capitalize|replace({'_': ' '}) }}</td>
+                    <td>{{ serie.status }}</td>
                     <td><span class="truncate-4" style="max-width: 200px;">{{ serie.synopsis }}</span></td>
                     <td>
                         <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
@@ -312,11 +312,19 @@
         if (!list) return;
 
         list.innerHTML = '';
+
+        if (series.length === 0) {
+            list.innerHTML = '<p class="text-muted">Aucune série trouvée</p>';
+            return;
+        }
+
         series.forEach(serie => {
             list.insertAdjacentHTML('beforeend', `
                 <li class="bg-dark carousel-item">
                     <article class="cardPoster">
-                        <img class="poster" src="${serie.posterUrl}" alt="${serie.title}">
+                        <a href="/serie/${serie.slug}">
+                            <img class="poster" src="${serie.posterUrl}" alt="poster ${serie.title}">
+                        </a>
                     </article>
                 </li>
             `);
@@ -326,18 +334,26 @@
         showPage(currentPage);
     }
 
+
     const filtersForm = document.getElementById('filtersList');
 
-    filtersForm.addEventListener('change', () => {
-        const formData = new FormData(filtersForm);
-        const params = new URLSearchParams(formData);
+    if (filtersForm) {
+        filtersForm.addEventListener('change', () => {
+            const formData = new FormData(filtersForm);
+            const params = new URLSearchParams(formData);
 
-        fetch('/api/series?' + params.toString())
-            .then(res => res.json())
-            .then(data => {
-                updateList(data);
-            });
-    });
+            fetch('/api/series?' + params.toString())
+                .then(res => {
+                    if (!res.ok) throw new Error('API error');
+                    return res.json();
+                })
+                .then(data => {
+                    updateList(data);
+                })
+                .catch(err => console.error(err));
+                    });
+                }
+
 
 </script>
 

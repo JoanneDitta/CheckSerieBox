@@ -26,11 +26,22 @@
             form div {
                 padding: 5px 0 5px 0;
             }
+            .underline {
+                text-decoration: underline;
+            }
+            li {
+                list-style-type: none;
+            }
+            a {
+                text-decoration: none;
+            }
         </style>
     </head>
     <body class="bg-dark text-white" style="min-height: 100vh">
         <header class="mb-5 px-5 py-2 bg-black d-flex justify-content-between align-items-center">
-            <h1>CheckSerieBox</h1>
+            <a href="{{ path('series_index') }}" class="text-white">
+                <h1>CheckSerieBox</h1>
+            </a>
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <a href={{ path('app_logout') }} class="btn btn-danger text-white">Logout</a>
             {% else %}

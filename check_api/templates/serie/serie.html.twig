@@ -25,45 +25,102 @@
 
 {% block body %}
     <style>
+        li {
+            margin: 10px 0;
+        }
+        .categories li {
+            border-bottom: 1px dotted #fff;
+            margin-top: 2px;
+            width: 12em;
+        }
+        .infos {
+            padding-left: 10px;
+        }
+        .infos li {
+            width: fit-content;
+            padding: 0 7px;
+            background-color: #707070;
+            border-radius: 5px;
+        }
+        .categories li span {
+            line-height: 1.5;
+            position: relative;
+            top: 7px;
+            background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity));
+            padding: 1px .2em 0 0;
+        }
+
+        .poster-card {
+            cursor: pointer;
+        }
+
+        .poster-actions {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .poster-card:hover .poster-actions {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+            padding: auto
+        }
+
+        .container {
+            margin-top: 150px;
+        }
     </style>
 
-    <div class="d-flex justify-content-between gap-5">
-        <img src={{ serie.posterUrl }} class=" border rounded" style="max-height: 300px" alt={{ serie.slug }} />
-        <div>
-            <div class="d-flex align-items-end gap-5 mb-5">
-                <h1 class="m-0">{{ serie.title }}</h1>
-                <p class="mb-1 link-underline-light">{{ serie.releaseDate }}</p>
+    <div class="container mx-auto">
+        <div class="row">
+            <div class="col-2 position-relative poster-card">
+                <div>
+                {# <a href="{{ path('serie_show', { slug: serie.slug }) }}" class="text-white"> #}
+                    <img src={{ serie.posterUrl }} class="w-100 border rounded" alt={{ serie.slug }} />
+                {# </a> #}
+                </div>
+                <div class="bg-secondary rounded position-absolute poster-actions">
+                    <div class="d-flex justify-content-around align-items-center px-2">
+                        <button><img src={{ asset('Images/eye.svg') }} style="max-width: 17px" alt="seen" /></BUTTON>
+                        <button><img src={{ asset('Images/like.svg') }} style="max-width: 17px" alt="like" /></BUTTON>
+                        <button><img src={{ asset('Images/watchlist.svg') }} style="max-width: 17px" alt="watchlist" /></BUTTON>
+                    </div>
+                </div>
             </div>
-            <p>{{ serie.synopsis }}</p>
-            <h3>Détails</h3>
-            <table>
-                <tr>
-                    <td>Nombre de saison</td>
-                    <td>{{ serie.nbSeason }}</td>
-                </tr>
-                <tr>
-                    <td>Pays</td>
-                    <td>{{ serie.country }}</td>
-                </tr>
-                <tr>
-                    <td>Platforme</td>
-                    <td>{{ serie.platform }}</td>
-                </tr>
-                <tr>
-                    <td>Type</td>
-                    <td>{{ serie.type }}</td>
-                </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>{{ serie.status }}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="bg-secondary  p-3 rounded">
-            <div class="d-flex justify-content-between align-items-center gap-2">
-                <img src={{ asset('Images/eye.svg') }} style="max-height: 35px" alt="seen" />
-                <img src={{ asset('Images/like.svg') }} style="max-height: 40px" alt="like" />
-                <img src={{ asset('Images/watchlist.svg') }} style="max-height: 40px" alt="watchlist" />
+            <div class="col-6">
+                <div class="d-flex align-items-end gap-3 mb-3">
+                    <h1 class="m-0">{{ serie.title }}</h1>
+                    <p class="mb-1 underline">{{ serie.releaseDate }}</p>
+                </div>
+                <p class="mb-5">{{ serie.synopsis }}</p>
+            </div>
+            <div class="col-4">
+                <h3>Détails</h3>
+                <div class="d-flex">
+                    <ul class="categories p-0">
+                        <li><span>Nombre de saison</span></li>
+                        <li><span>Pays</span></li>
+                        <li><span>Platforme</span></li>
+                        <li><span>Type</span></li>
+                        <li><span>Status</span></li>
+                    </ul>
+                    <ul class="infos">
+                        <li>{{ serie.nbSeason }}</li>
+                        <li>{{ serie.country }}</li>
+                        <li>{{ serie.platform }}</li>
+                        <li>{{ serie.type }}</li>
+                        <li>{{ serie.status }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
