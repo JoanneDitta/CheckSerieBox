@@ -1,0 +1,213 @@
+{# {% extends 'base.html.twig' %}
+
+{% block title %}Hello SerieController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Hello {{ controller_name }}! ✅</h1>
+
+    This friendly message is coming from:
+    <ul>
+        <li>Your controller at <code>C:/Users/joann/Documents/GitHub/CheckSerieBox/check_api/src/Controller/SerieController.php</code></li>
+        <li>Your template at <code>C:/Users/joann/Documents/GitHub/CheckSerieBox/check_api/templates/serie/index.html.twig</code></li>
+    </ul>
+</div>
+{% endblock %} #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+<style>
+    li {
+        list-style-type: none;
+    }
+    ul {
+        padding: 0%;
+    }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    .truncate-4 {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;   /* nombre de lignes */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    th, td { padding-left: 10px; padding-right: 25px; }
+    .listCards {
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 5px;
+        grid-auto-rows: minmax(100px, auto);
+        position: relative;
+        width: fit-content;
+        margin-bottom: 100px;
+    }
+    .poster{
+        border-radius: 3%;
+        height: 225px;
+        width: 150px;
+    }
+</style>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% set filterOptions = {
+    'type': types,
+    'country': countries,
+    'release_date': release_dates,
+    'platform': platforms,
+    'nb_season': nb_seasons,
+    'status': status,
+} %}
+
+<div>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="m-0">Serie's list</h2>
+        <a href="{{ path('serie_add') }}" class="btn btn-primary">Ajouter une série</a>
+    </div>
+    <div class="text-end">
+        <input
+            type="text"
+            name="searchbar"
+            id="searchbar"
+            class="searchbar"
+            placeholder="Rechercher une série..."
+        />
+    </div>
+
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Poster</th>
+                <th>Type</th>
+                <th>Pays</th>
+                <th>Date</th>
+                <th>Plateforme</th>
+                <th>Saison</th>
+                <th>Status</th>
+                <th>Comment</th>
+            </tr>
+        </thead>
+        <tbody id="tableSerie">
+            {% for serie in series %}
+                <tr class="tableSerie-item" data-title="{{ serie.title|lower }}">
+                    <td>
+                        <a href="{{ path('serie_show', { slug: serie.slug }) }}">
+                            <img src=""  style="width: 15px; height: 15px;" />
+                        </a>
+                    </td>
+                    <td>{{ serie.id }}</td>
+                    <td>{{ serie.title }}</td>
+                    <td>
+                        <img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} />
+                    </td>
+                    <td>{{ serie.type }}</td>
+                    <td>{{ serie.country }}</td>
+                    <td>{{ serie.releaseDate }}</td>
+                    <td>{{ serie.platform }}</td>
+                    <td>{{ serie.nbSeason }}</td>
+                    <td>{{ serie.status }}</td>
+                    <td>
+                        <span class="truncate-4" style="max-width: 200px;">{{ serie.synopsis }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
+                            <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ path('serie_delete', {id: serie.id}) }}" class="btn btn-danger">
+                            <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<script>
+function updateList(series) {
+        const list = document.querySelector('.listCards');
+        if (!list) return;
+
+        list.innerHTML = '';
+
+        if (series.length === 0) {
+            list.innerHTML = '<p class="text-muted">Aucune série trouvée</p>';
+            return;
+        }
+
+        series.forEach(serie => {
+            list.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td>
+                        <a href="serie/${serie.slug}">
+                            <img src="" style="width: 20px; height: 20px;" alt="edit" />
+                        </a>
+                    </td>
+                    <td>${serie.id}</td>
+                    <td>${serie.title}</td>
+                    <td>
+                        <img src=${serie.posterUrl} style="max-height: 100px" alt=${serie.title} />
+                    </td>
+                    <td>${serie.type}</td>
+                    <td>${serie.country}</td>
+                    <td>${serie.releaseDate}</td>
+                    <td>${serie.platform}</td>
+                    <td>${serie.nbSeason}</td>
+                    <td>${serie.status}</td>
+                    <td>
+                        <span class="truncate-4" style="max-width: 200px;">${serie.synopsis}</span>
+                    </td>
+                    <td>
+                        <a href="/admin/edit/${serie.id}" class="btn btn-primary">
+                            <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
+                        </a>
+                    </td>
+                    <td>
+                        <a href="admin/delete/${serie.id}" class="btn btn-danger">
+                            <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
+                        </a>
+                    </td>
+                </tr>
+            `);
+        });
+    }
+
+    const searchBar = document.getElementById('searchbar');
+    const series = document.querySelectorAll('#tableSerie .tableSerie-item');
+
+    searchBar.addEventListener('input', () => {
+        const searchValue = searchBar.value.toLowerCase().trim();
+
+        series.forEach(serie => {
+            const title = serie.dataset.title;
+
+            if (title.includes(searchValue)) {
+                serie.style.display = '';
+            } else {
+                serie.style.display = 'none';
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}

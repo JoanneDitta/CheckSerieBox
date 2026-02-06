@@ -1,24 +1,3 @@
-{# {% extends 'base.html.twig' %}
-
-{% block title %}Hello SerieController!{% endblock %}
-
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/joann/Documents/GitHub/CheckSerieBox/check_api/src/Controller/SerieController.php</code></li>
-        <li>Your template at <code>C:/Users/joann/Documents/GitHub/CheckSerieBox/check_api/templates/serie/index.html.twig</code></li>
-    </ul>
-</div>
-{% endblock %} #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %} {{ title }} {% endblock %}
@@ -92,7 +71,6 @@
     }
 
     th, td { padding-left: 10px; padding-right: 25px; }
-    .poster { height: 220px; width: 150px;}
     .listCards {
         margin: auto;
         display: grid;
@@ -152,9 +130,8 @@
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h2 class="m-0">Serie's list</h2>
         {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('serie_add') }}" class="btn btn-primary">Ajouter une série</a>
-    </div>
-        {% else %}
+            <a href="{{ path('admin_index') }}" class="btn btn-primary">Panneau Admin</a>
+        {% endif %}
     </div>
     <div class="d-flex justify-content-between">
         <form id="filtersList" class="filters d-flex justify-content-between align-items-center gap-3 mb-3 w-100">
@@ -177,16 +154,6 @@
                 {% endfor %}
             </div>
         </form>
-        {# <form method="get" action="{{ path('series_index') }}" class="searchbar-form">
-            <input
-                type="text"
-                name="search"
-                class="searchbar"
-                placeholder="Rechercher une série"
-                value="{{ app.request.query.get('search') }}"
-            >
-            <button type="submit">Rechercher</button>
-        </form> #}
         <div>
             <input
                 type="text"
@@ -197,73 +164,25 @@
             />
         </div>
     </div>
-    {% endif %}
 </div>
-
-{% if is_granted('ROLE_ADMIN') %}
-    <table class="table table-dark table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Poster</th>
-                <th>Type</th>
-                <th>Pays</th>
-                <th>Date</th>
-                <th>Plateforme</th>
-                <th>Saison</th>
-                <th>Status</th>
-                <th>Comment</th>
-            </tr>
-        </thead>
-        <tbody class="tableSerie">
-            {% for serie in series %}
-                <tr>
-                    {# <td><a href="{{ path('serie_show', { slug: series.slug }) }}"><img scr={{ asset('Images/eye.png') }}  style="width: 15px; height: 15px;" /></a></td> #}
-                    <td>{{ serie.id }}</td>
-                    <td>{{ serie.title }}</td>
-                    <td><img src={{ serie.posterUrl }} style="max-height: 100px" alt={{ serie.title }} /></td>
-                    <td>{{ serie.type }}</td>
-                    <td>{{ serie.country }}</td>
-                    <td>{{ serie.releaseDate }}</td>
-                    <td>{{ serie.platform }}</td>
-                    <td>{{ serie.nbSeason }}</td>
-                    <td>{{ serie.status }}</td>
-                    <td><span class="truncate-4" style="max-width: 200px;">{{ serie.synopsis }}</span></td>
-                    <td>
-                        <a href="{{ path('serie_edit', {id: serie.id}) }}" class="btn btn-primary">
-                            <img src={{ asset('Images/edit.png') }} style="width: 20px; height: 20px;" alt="edit" />
-                        </a>
-                    </td>
-                    <td>
-                        <a href="{{ path('serie_delete', {id: serie.id}) }}" class="btn btn-danger">
-                            <img src={{ asset('Images/delete.png') }} style="width: 20px; height: 20px;" alt="delete" />
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <div class="carousel-container">
-        <div class="carousel-controls mx-auto w-50 d-flex justify-content-around align-items-center mb-4">
-            <button id="prevBtn" class="btn btn-secondary py-1">←</button>
-            <span id="pageIndicator"></span>
-            <button id="nextBtn" class="btn btn-secondary py-0">→</button>
-        </div>
-        <ul class="listCards" id="carousel">
-            {% for serieRandom in seriesRandomLimited %}
-                <li class="bg-dark carousel-item" data-title="{{ serieRandom.title|lower }}">
-                    <article class="cardPoster">
-                        <a href="{{ path('serie_show', { slug: serieRandom.slug }) }}">
-                            <img class="poster" src={{ serieRandom.poster_url }} alt={`poster {{ serieRandom.title }}`} />
-                        </a>
-                    </article>
-                </li>
-            {% endfor %}
-        </ul>
+<div class="carousel-container">
+    <div class="carousel-controls mx-auto w-50 d-flex justify-content-around align-items-center mb-4">
+        <button id="prevBtn" class="btn btn-secondary py-1">←</button>
+        <span id="pageIndicator"></span>
+        <button id="nextBtn" class="btn btn-secondary py-0">→</button>
     </div>
-{% endif %}
+    <ul class="listCards" id="carousel">
+        {% for serieRandom in seriesRandomLimited %}
+            <li class="bg-dark carousel-item" data-title="{{ serieRandom.title|lower }}">
+                <article class="cardPoster">
+                    <a href="{{ path('serie_show', { slug: serieRandom.slug }) }}">
+                        <img class="poster" src={{ serieRandom.poster_url }} alt={`poster {{ serieRandom.title }}`} />
+                    </a>
+                </article>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 
 <script>
 

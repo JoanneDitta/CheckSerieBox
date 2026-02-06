@@ -72,6 +72,29 @@ final class SerieController extends AbstractController
         ]);
     }
 
+    #[Route("/admin/", name: "admin_index")]
+    public function admin(EntityManagerInterface $em): Response
+    {
+        $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
+        $types = $em->getRepository(Serie::class)->findDistinctTypes();
+        $countries = $em->getRepository(Serie::class)->findDistinctCountries();
+        $release_dates = $em->getRepository(Serie::class)->findDistinctRelease_dates();
+        $platforms = $em->getRepository(Serie::class)->findDistinctPlatforms();
+        $nb_seasons = $em->getRepository(Serie::class)->findDistinctNb_seasons();
+        $status = $em->getRepository(Serie::class)->findDistinctStatuts();
+
+        return $this->render('serie/admin.html.twig', [
+            'title' => 'CheckSérieBox',
+            'series' => $series,
+            'types' => $types,
+            'countries' => $countries,
+            'release_dates' => $release_dates,
+            'platforms' => $platforms,
+            'nb_seasons' => $nb_seasons,
+            'status' => $status,
+        ]);
+    }
+
     // --------------- ADD A SERIE ---------------
     #[Route("/admin/add", name: "serie_add")]
     public function add(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
