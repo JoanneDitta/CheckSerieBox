@@ -148,7 +148,7 @@
     'status': status,
 } %}
 
-<div style="">
+<div>
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h2 class="m-0">Serie's list</h2>
         {% if is_granted('ROLE_ADMIN') %}
@@ -156,11 +156,12 @@
     </div>
         {% else %}
     </div>
+    <div class="d-flex justify-content-between">
         <form id="filtersList" class="filters d-flex justify-content-between align-items-center gap-3 mb-3 w-100">
-            <p class="m-0">Filters</p>
-            <div class="d-flex">
+            {# <p class="m-0">Filters</p> #}
+            <div class="d-flex p-0">
                 {% for name, options in filterOptions %}
-                    <div class="filter-container">
+                    <div class="filter-container p-0">
                         <label class="filter-label">
                             <select name="{{ name }}">
                                 <option value="">{{ name|capitalize|replace({'_': ' '}) }}</option>
@@ -176,6 +177,26 @@
                 {% endfor %}
             </div>
         </form>
+        {# <form method="get" action="{{ path('series_index') }}" class="searchbar-form">
+            <input
+                type="text"
+                name="search"
+                class="searchbar"
+                placeholder="Rechercher une série"
+                value="{{ app.request.query.get('search') }}"
+            >
+            <button type="submit">Rechercher</button>
+        </form> #}
+        <div>
+            <input
+                type="text"
+                name="searchbar"
+                id="searchbar"
+                class="searchbar"
+                placeholder="Rechercher une série..."
+            />
+        </div>
+    </div>
     {% endif %}
 </div>
 
@@ -232,7 +253,7 @@
         </div>
         <ul class="listCards" id="carousel">
             {% for serieRandom in seriesRandomLimited %}
-                <li class="bg-dark carousel-item">
+                <li class="bg-dark carousel-item" data-title="{{ serieRandom.title|lower }}">
                     <article class="cardPoster">
                         <a href="{{ path('serie_show', { slug: serieRandom.slug }) }}">
                             <img class="poster" src={{ serieRandom.poster_url }} alt={`poster {{ serieRandom.title }}`} />
@@ -351,8 +372,25 @@
                     updateList(data);
                 })
                 .catch(err => console.error(err));
-                    });
-                }
+        });
+    }
+
+    const searchBar = document.getElementById('searchbar');
+    const cards = document.querySelectorAll('#carousel .carousel-item');
+
+    searchBar.addEventListener('input', () => {
+        const searchValue = searchBar.value.toLowerCase().trim();
+
+        cards.forEach(card => {
+            const title = card.dataset.title;
+
+            if (title.includes(searchValue)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
 
 
 </script>
