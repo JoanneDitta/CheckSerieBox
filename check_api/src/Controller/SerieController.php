@@ -112,12 +112,12 @@ final class SerieController extends AbstractController
 
             $serie->setTitle($title);
             $serie->setSlug($slug);
-            $serie->setPosterUrl($data->get('posterUrl'));
+            $serie->setPosterUrl($data->get('poster_url'));
             $serie->setType($data->get('type'));
             $serie->setCountry($data->get('country'));
-            $serie->setReleaseDate($data->get('releaseDate'));
+            $serie->setReleaseDate($data->get('release_date'));
             $serie->setPlatform($data->get('platform'));
-            $serie->setNbSeason($data->get('nbSeason'));
+            $serie->setNbSeason($data->get('nb_season'));
             $serie->setSynopsis($data->get('synopsis'));
             $serie->setStatus($data->get('status'));
 
@@ -131,7 +131,7 @@ final class SerieController extends AbstractController
 
     // --------------- EDIT A SERIE ---------------
     #[Route("/admin/edit/{id}", name: "serie_edit")]
-    public function edit($id, Request $request, EntityManagerInterface $em): Response
+    public function edit($id, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $serie = $em->getRepository(Serie::class)->find($id);
         if (!$serie) {
@@ -139,14 +139,22 @@ final class SerieController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
+
             $data = $request->request;
-            $serie->setTitle($data->get('title'));
-            $serie->setPosterUrl($data->get('posterUrl'));
+
+            $title = $data->get('title');
+            $slug = $slugger
+                ->slug($data->get('title'))
+                ->lower();
+
+            $serie->setTitle($title);
+            $serie->setSlug($slug);
+            $serie->setPosterUrl($data->get('poster_url'));
             $serie->setType($data->get('type'));
             $serie->setCountry($data->get('country'));
-            $serie->setReleaseDate($data->get('releaseDate'));
+            $serie->setReleaseDate($data->get('release_date'));
             $serie->setPlatform($data->get('platform'));
-            $serie->setNbSeason($data->get('nbSeason'));
+            $serie->setNbSeason($data->get('nb_season'));
             $serie->setSynopsis($data->get('synopsis'));
             $serie->setStatus($data->get('status'));
 
