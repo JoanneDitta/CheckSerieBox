@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SerieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -43,6 +45,17 @@ class Serie
 
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
+
+    /**
+     * @var Collection<int, UserSerie>
+     */
+    #[ORM\OneToMany(targetEntity: UserSerie::class, mappedBy: 'serie')]
+    private Collection $userSeries;
+
+    public function __construct()
+    {
+        $this->userSeries = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -165,6 +178,36 @@ class Serie
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSerie>
+     */
+    public function getUserSeries(): Collection
+    {
+        return $this->userSeries;
+    }
+
+    public function addUserSeries(UserSerie $userSeries): static
+    {
+        if (!$this->userSeries->contains($userSeries)) {
+            $this->userSeries->add($userSeries);
+            $userSeries->setSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSeries(UserSerie $userSeries): static
+    {
+        if ($this->userSeries->removeElement($userSeries)) {
+            // set the owning side to null (unless already changed)
+            if ($userSeries->getSerie() === $this) {
+                $userSeries->setSerie(null);
+            }
+        }
 
         return $this;
     }

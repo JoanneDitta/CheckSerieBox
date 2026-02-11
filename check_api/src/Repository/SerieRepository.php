@@ -49,17 +49,17 @@ class SerieRepository extends ServiceEntityRepository
             ->fetchAllAssociative();
     }
 
-    public function findRandomLimited(int $limit = 24): array
-    {
-        return $this->getEntityManager()
-            ->getConnection()
-            ->executeQuery(
-                'SELECT * FROM serie ORDER BY RAND() LIMIT :limit',
-                ['limit' => $limit],
-                ['limit' => \PDO::PARAM_INT]
-            )
-            ->fetchAllAssociative();
-    }
+    // public function findRandomLimited(int $limit = 24): array
+    // {
+    //     return $this->getEntityManager()
+    //         ->getConnection()
+    //         ->executeQuery(
+    //             'SELECT * FROM serie ORDER BY RAND() LIMIT :limit',
+    //             ['limit' => $limit],
+    //             ['limit' => \PDO::PARAM_INT]
+    //         )
+    //         ->fetchAllAssociative();
+    // }
 
     public function findByFilters(array $filters): array
     {
@@ -100,58 +100,81 @@ class SerieRepository extends ServiceEntityRepository
 
     // -------------------- FIND BY DISTINCT --------------------
 
-    public function findDistinctTypes(): array
+    // public function findDistinctTypes(): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('DISTINCT s.type')
+    //         ->orderBy('s.type')
+    //         ->getQuery()
+    //         ->getSingleColumnResult();
+    // }
+
+    // public function findDistinctCountries(): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('DISTINCT s.country')
+    //         ->orderBy('s.country')
+    //         ->getQuery()
+    //         ->getSingleColumnResult();
+    // }
+
+    // public function findDistinctPlatforms(): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('DISTINCT s.platform')
+    //         ->orderBy('s.platform')
+    //         ->getQuery()
+    //         ->getSingleColumnResult();
+    // }
+
+    // public function findDistinctrelease_dates(): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('DISTINCT s.release_date')
+    //         ->orderBy('s.release_date')
+    //         ->getQuery()
+    //         ->getSingleColumnResult();
+    // }
+
+    // public function findDistinctNb_seasons(): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('DISTINCT s.nb_season')
+    //         ->orderBy('s.nb_season')
+    //         ->getQuery()
+    //         ->getSingleColumnResult();
+    // }
+
+    // public function findDistinctStatuts(): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->select('DISTINCT s.status')
+    //         ->orderBy('s.status')
+    //         ->getQuery()
+    //         ->getSingleColumnResult();
+    // }
+
+    public function findDistinctByField(string $field): array
     {
+        $allowedFields = [
+            'type',
+            'country',
+            'platform',
+            'release_date',
+            'nb_season',
+            'status',
+        ];
+
+        if (!in_array($field, $allowedFields, true)) {
+            throw new \InvalidArgumentException('Champ non autorisé');
+        }
+
         return $this->createQueryBuilder('s')
-            ->select('DISTINCT s.type')
-            ->orderBy('s.type')
+            ->select('DISTINCT s.' . $field)
+            ->orderBy('s.' . $field)
             ->getQuery()
             ->getSingleColumnResult();
     }
 
-    public function findDistinctCountries(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('DISTINCT s.country')
-            ->orderBy('s.country')
-            ->getQuery()
-            ->getSingleColumnResult();
-    }
-
-    public function findDistinctPlatforms(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('DISTINCT s.platform')
-            ->orderBy('s.platform')
-            ->getQuery()
-            ->getSingleColumnResult();
-    }
-
-    public function findDistinctRelease_dates(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('DISTINCT s.release_date')
-            ->orderBy('s.release_date')
-            ->getQuery()
-            ->getSingleColumnResult();
-    }
-
-    public function findDistinctNb_Seasons(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('DISTINCT s.nb_season')
-            ->orderBy('s.nb_season')
-            ->getQuery()
-            ->getSingleColumnResult();
-    }
-
-    public function findDistinctStatuts(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('DISTINCT s.status')
-            ->orderBy('s.status')
-            ->getQuery()
-            ->getSingleColumnResult();
-    }
 
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $username = null;
+
+    /**
+     * @var Collection<int, UserSerie>
+     */
+    #[ORM\OneToMany(targetEntity: UserSerie::class, mappedBy: 'user')]
+    private Collection $userSeries;
+
+    public function __construct()
+    {
+        $this->userSeries = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -112,5 +128,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSerie>
+     */
+    public function getUserSeries(): Collection
+    {
+        return $this->userSeries;
+    }
+
+    public function addUserSeries(UserSerie $userSeries): static
+    {
+        if (!$this->userSeries->contains($userSeries)) {
+            $this->userSeries->add($userSeries);
+            $userSeries->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSeries(UserSerie $userSeries): static
+    {
+        if ($this->userSeries->removeElement($userSeries)) {
+            // set the owning side to null (unless already changed)
+            if ($userSeries->getUser() === $this) {
+                $userSeries->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

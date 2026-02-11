@@ -42,14 +42,19 @@
             <a href="{{ path('series_index') }}" class="text-white">
                 <h1>CheckSerieBox</h1>
             </a>
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <a href={{ path('app_logout') }} class="btn btn-danger text-white">Logout</a>
-            {% else %}
-                <div class="d-flex justify-content-between align-items-center gap-3">
-                    <a href={{ path('app_login') }} class="btn btn-primary text-white">Login</a>
-                    <a href={{ path('app_register') }} class="btn btn-primary text-white">Sign in</a>
-                </div>
-            {% endif %}
+            <div>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin_index') }}" class="btn btn-primary mx-3">Panneau Admin</a>
+                    {% endif %}
+                    <a href={{ path('app_logout') }} class="btn btn-danger text-white">Logout</a>
+                {% else %}
+                    <div class="d-flex justify-content-between align-items-center gap-3">
+                        <a href={{ path('app_login') }} class="btn btn-primary text-white">Login</a>
+                        <a href={{ path('app_register') }} class="btn btn-primary text-white">Sign in</a>
+                    </div>
+                {% endif %}
+            </div>
         </header>
         <main class="mx-5">
             {% block body %}

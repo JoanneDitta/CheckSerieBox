@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+<style>
+    li {
+        list-style-type: none;
+    }
+    ul {
+        padding: 0%;
+    }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    .truncate-4 {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;   /* nombre de lignes */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .filters {
+        border-bottom: solid 1px grey;
+        width: fit-content;
+        margin: 0 0 3rem 0;
+    }
+    .filter-container {
+        position: relative;
+        display: inline-block;
+    }
+    .filter-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        padding: 5px 10px;
+        border-radius: 6px;
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+    .filter-label:hover {
+        /* color: rgb(166, 166, 166); */
+        /* background: #222; */
+        opacity: 75%;
+    }
+    .filter-icon {
+        width: 12px;
+        height: 12px;
+        transition: transform 0.3s ease;
+    }
+    .filter-label select:focus + .filter-icon,
+    .filter-label select:active + .filter-icon {
+        transform: rotate(-180deg);
+    }
+
+    /* Select stylé */
+    .filter-label select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        padding-left: 5px;
+        cursor: pointer;
+        width: fit-content;
+    }
+    .filter-label option {
+        background-color: #373b3f;
+    }
+
+    th, td { padding-left: 10px; padding-right: 25px; }
+    .listCards {
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 5px;
+        grid-auto-rows: minmax(100px, auto);
+        position: relative;
+        width: fit-content;
+        margin-bottom: 100px;
+    }
+    .carousel-item {
+        display: none;
+    }
+    /* .card {
+    }
+    .card:hover {
+    } */
+    .cardPoster {
+        position: relative;
+        border-radius: 4%;
+        border: solid 1px #666666;
+        box-shadow: 0 5px 10px #14181c;
+        margin: 2px;
+        /* height: fit-content; */
+        width: fit-content;
+    }
+    .cardPoster:hover {
+        border: solid 3px #ffffff;
+        margin: 0;
+    }
+    .poster{
+        border-radius: 3%;
+        height: 225px;
+        width: 150px;
+    }
+    .serieTitle{
+        position: absolute;
+    }
+
+
+    .poster-actions button {
+        background: none;
+        border: none;
+        opacity: 0.4;
+        transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .poster-actions button.active {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+
+    .poster-card {
+        cursor: pointer;
+    }
+
+    .poster-actions {
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        gap: 10px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .poster-card:hover .poster-actions {
+        opacity: 80%;
+        pointer-events: auto;
+    }
+
+</style>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% set filterOptions = {
+    'type': types,
+    'country': countries,
+    'release_date': release_dates,
+    'platform': platforms,
+    'nb_season': nb_seasons,
+    'status': status,
+} %}
+
+<div>
+
+</div>
+
+<script>
+</script>
+
+{% endblock %}

@@ -36,18 +36,18 @@ final class SerieController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
-        $seriesRandomLimited = $em->getRepository(Serie::class)->findAllRandom(); // récupérer toutes les séries dans un ordre random
-        $types = $em->getRepository(Serie::class)->findDistinctTypes();
-        $countries = $em->getRepository(Serie::class)->findDistinctCountries();
-        $release_dates = $em->getRepository(Serie::class)->findDistinctRelease_dates();
-        $platforms = $em->getRepository(Serie::class)->findDistinctPlatforms();
-        $nb_seasons = $em->getRepository(Serie::class)->findDistinctNb_seasons();
-        $status = $em->getRepository(Serie::class)->findDistinctStatuts();
+        $seriesRandom = $em->getRepository(Serie::class)->findAllRandom(); // récupérer toutes les séries dans un ordre random
+        $types = $em->getRepository(Serie::class)->findDistinctByField('type');
+        $countries = $em->getRepository(Serie::class)->findDistinctByField('country');
+        $release_dates = $em->getRepository(Serie::class)->findDistinctByField('platform');
+        $platforms = $em->getRepository(Serie::class)->findDistinctByField('release_date');
+        $nb_seasons = $em->getRepository(Serie::class)->findDistinctByField('nb_season');
+        $status = $em->getRepository(Serie::class)->findDistinctByField('status');
 
         return $this->render('serie/index.html.twig', [
             'title' => 'CheckSérieBox',
             'series' => $series,
-            'seriesRandomLimited' => $seriesRandomLimited,
+            'seriesRandom' => $seriesRandom,
             'types' => $types,
             'countries' => $countries,
             'release_dates' => $release_dates,
@@ -58,13 +58,13 @@ final class SerieController extends AbstractController
     }
 
     #[Route('/serie/{slug}', name: 'serie_show')]
-    public function display_a_serie(EntityManagerInterface $em, string $slug): Response
+    public function displaySerie(EntityManagerInterface $em, string $slug): Response
     {
-        $serie = $em->getRepository(Serie::class)->findOneBy(["slug" => $slug]); // récupérer 1 série via son slug
+        $serie = $em->getRepository(Serie::class)->findOneBy(["slug" => $slug]);
 
-    if (!$serie) {
-        throw $this->createNotFoundException('Série non trouvée');
-    }
+        if (!$serie) {
+            throw $this->createNotFoundException('Série non trouvée');
+        }
 
         return $this->render('serie/serie.html.twig', [
             'title' => 'CheckSérieBox',
@@ -76,12 +76,12 @@ final class SerieController extends AbstractController
     public function admin(EntityManagerInterface $em): Response
     {
         $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
-        $types = $em->getRepository(Serie::class)->findDistinctTypes();
-        $countries = $em->getRepository(Serie::class)->findDistinctCountries();
-        $release_dates = $em->getRepository(Serie::class)->findDistinctRelease_dates();
-        $platforms = $em->getRepository(Serie::class)->findDistinctPlatforms();
-        $nb_seasons = $em->getRepository(Serie::class)->findDistinctNb_seasons();
-        $status = $em->getRepository(Serie::class)->findDistinctStatuts();
+        $types = $em->getRepository(Serie::class)->findDistinctByField('type');
+        $countries = $em->getRepository(Serie::class)->findDistinctByField('country');
+        $release_dates = $em->getRepository(Serie::class)->findDistinctByField('platform');
+        $platforms = $em->getRepository(Serie::class)->findDistinctByField('release_date');
+        $nb_seasons = $em->getRepository(Serie::class)->findDistinctByField('nb_season');
+        $status = $em->getRepository(Serie::class)->findDistinctByField('status');
 
         return $this->render('serie/admin.html.twig', [
             'title' => 'CheckSérieBox',
