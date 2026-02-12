@@ -73,4 +73,15 @@ class UserSerieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findLikedByUser(User $user)
+    {
+        return $this->createQueryBuilder('us')
+            ->where('us.user = :user')
+            ->andWhere('us.liked = true')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }

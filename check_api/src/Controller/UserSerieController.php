@@ -100,7 +100,7 @@ class UserSerieController extends AbstractController
             // 'a_suivre' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'À suivre'),
             'watchlist' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Watchlist'),
             'abandonnee' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Abandonnée'),
-            'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
+            'likes' => $em->getRepository(UserSerie::class)->findLikedByUser($user),
         ]);
     }
 
