@@ -19,6 +19,9 @@ class Serie
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $slug = null;
+
     #[ORM\Column(length: 255)]
     private ?string $poster_url = null;
 
@@ -42,9 +45,6 @@ class Serie
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
-
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $slug = null;
 
     /**
      * @var Collection<int, UserSerie>
@@ -70,6 +70,18 @@ class Serie
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }
@@ -166,18 +178,6 @@ class Serie
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
 
         return $this;
     }

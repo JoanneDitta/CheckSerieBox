@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Serie;
+use App\Entity\User;
 use App\Repository\UserSerieRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,10 +27,10 @@ class UserSerie
     private ?string $list = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $addedAt = null;
+    private ?bool $liked = null;
 
     #[ORM\Column]
-    private ?bool $liked = null;
+    private ?\DateTimeImmutable $addedAt = null;
 
     public function getId(): ?int
     {
@@ -71,18 +73,6 @@ class UserSerie
         return $this;
     }
 
-    public function getAddedAt(): ?\DateTimeImmutable
-    {
-        return $this->addedAt;
-    }
-
-    public function setAddedAt(\DateTimeImmutable $addedAt): static
-    {
-        $this->addedAt = $addedAt;
-
-        return $this;
-    }
-
     public function isLiked(): ?bool
     {
         return $this->liked;
@@ -91,6 +81,18 @@ class UserSerie
     public function setLiked(bool $liked): static
     {
         $this->liked = $liked;
+
+        return $this;
+    }
+
+    public function getAddedAt(): ?\DateTimeImmutable
+    {
+        return $this->addedAt;
+    }
+
+    public function setAddedAt(\DateTimeImmutable $addedAt): static
+    {
+        $this->addedAt = $addedAt;
 
         return $this;
     }

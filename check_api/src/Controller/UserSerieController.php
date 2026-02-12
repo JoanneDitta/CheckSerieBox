@@ -14,33 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class UserSerieController extends AbstractController
 {
 
-    // #[Route("/username", name: "serie_user_index")]
-    // public function index(EntityManagerInterface $em): Response
-    // {
-    //     $user = $this->getUser();
-
-    //     if (!$user) {
-    //         throw $this->createAccessDeniedException();
-    //     }
-
-    //     $vu = $em->getRepository(UserSerie::class)->findAllChronologicaly('Vu');
-    //     $en_cours = $em->getRepository(UserSerie::class)->findAllChronologicaly('En cours');
-    //     $a_suivre = $em->getRepository(UserSerie::class)->findAllChronologicaly('À suivre');
-    //     $watchlist = $em->getRepository(UserSerie::class)->findAllChronologicaly('Watchlist');
-    //     $abandonnee = $em->getRepository(UserSerie::class)->findAllChronologicaly('Abandonnée');
-    //     $like = $em->getRepository(UserSerie::class)->findAllChronologicaly('Like');
-
-    //     return $this->render('userserie/index.html.twig', [
-    //         'title' => 'CheckSérieBox',
-    //         'vu' => $vu,
-    //         'en_cours' => $en_cours,
-    //         'a_suivre' => $a_suivre,
-    //         'watchlist' => $watchlist,
-    //         'abandonnee' => $abandonnee,
-    //         'like' => $like,
-    //     ]);
-    // }
-
     #[Route('/api/user/serie/toggle', name: 'user_serie_toggle', methods: ['POST'])]
     public function toggle(Request $request, EntityManagerInterface $em): JsonResponse
     {
@@ -109,5 +82,90 @@ class UserSerieController extends AbstractController
         ]);
     }
 
+
+    #[Route("/username", name: "serie_user_index")]
+    public function index(EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('userserie/index.html.twig', [
+            'title' => 'CheckSérieBox',
+            'user' => $user->getUserIdentifier(),
+            'vu' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Vu'),
+            'en_cours' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'En cours'),
+            // 'a_suivre' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'À suivre'),
+            'watchlist' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Watchlist'),
+            'abandonnee' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Abandonnée'),
+            'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
+        ]);
+    }
+
+    #[Route("/username/series", name: "serie_user_series_list")]
+    public function series_list(EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('userserie/index.html.twig', [
+            'title' => 'CheckSérieBox',
+            'vu' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Vu'),
+            // 'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
+        ]);
+    }
+
+    #[Route("/username/watching", name: "serie_user_watching_list")]
+    public function watching_list(EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('userserie/index.html.twig', [
+            'title' => 'CheckSérieBox',
+            'en_cours' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'En cours'),
+            // 'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
+        ]);
+    }
+
+    #[Route("/username/watchlist", name: "serie_user_watchlist")]
+    public function watchlist(EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('userserie/index.html.twig', [
+            'title' => 'CheckSérieBox',
+            'watchlist' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Watchlist'),
+            // 'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
+        ]);
+    }
+
+    #[Route("/username/abandon", name: "serie_user_abandon_list")]
+    public function abandon_list(EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('userserie/index.html.twig', [
+            'title' => 'CheckSérieBox',
+            'abandonnee' => $em->getRepository(UserSerie::class)->findByUserAndList($user, $user, 'Abandonnée'),
+            // 'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
+        ]);
+    }
 
 }

@@ -100,7 +100,7 @@
         width: fit-content;
     }
     .cardPoster:hover {
-        border: solid 3px #ffffff;
+        border: solid 2px #ffffff;
         margin: 0;
     }
     .poster{
@@ -161,26 +161,6 @@
         transform: scale(1.15);
     }
 
-    /* .serie-action.active[data-list="vu"] svg {
-        filter: brightness(0) saturate(100%) invert(18%) sepia(97%) saturate(7456%) hue-rotate(267deg) brightness(87%) contrast(119%);
-    }
-
-    .serie-action.active[data-list="en_cours"] svg {
-        filter: brightness(0) saturate(100%) invert(48%) sepia(83%) saturate(470%) hue-rotate(66deg) brightness(92%) contrast(93%);
-    }
-
-    .serie-action.active[data-list="watchlist"] svg {
-        filter: brightness(0) saturate(100%) invert(14%) sepia(96%) saturate(5564%) hue-rotate(227deg) brightness(92%) contrast(106%);
-    }
-
-    .serie-action.active[data-list="abandonnee"] svg {
-        filter: brightness(0) saturate(100%) invert(14%) sepia(92%) saturate(7493%) hue-rotate(356deg) brightness(95%) contrast(118%);
-    }
-
-    .serie-action.active[data-list="like"] svg {
-        filter: brightness(0) saturate(100%) invert(48%) sepia(91%) saturate(799%) hue-rotate(9deg) brightness(96%) contrast(92%);
-    } */
-
     .serie-action.active[data-list="vu"] svg {
         fill: #6800D8;
     }
@@ -215,9 +195,6 @@
 } %}
 
 <div>
-    {# <div class="d-flex justify-content-between align-items-center mb-5">
-        <h2 class="m-0">Serie's list</h2>
-    </div> #}
     <div class="d-flex justify-content-between">
         <form id="filtersList" class="filters d-flex justify-content-between align-items-center gap-5">
             <p class="m-0">Filters</p>
@@ -245,7 +222,7 @@
                 name="searchbar"
                 id="searchbar"
                 class="searchbar"
-                placeholder="Rechercher une série..."
+                placeholder="Search a serie..."
             />
         </div>
     </div>

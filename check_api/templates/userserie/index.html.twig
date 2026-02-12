@@ -4,75 +4,6 @@
 
 {% block body %}
 <style>
-    li {
-        list-style-type: none;
-    }
-    ul {
-        padding: 0%;
-    }
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
-    .truncate-4 {
-        display: -webkit-box;
-        -webkit-line-clamp: 4;   /* nombre de lignes */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .filters {
-        border-bottom: solid 1px grey;
-        width: fit-content;
-        margin: 0 0 3rem 0;
-    }
-    .filter-container {
-        position: relative;
-        display: inline-block;
-    }
-    .filter-label {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
-        font-weight: 500;
-        padding: 5px 10px;
-        border-radius: 6px;
-        transition: color 0.3s ease, background-color 0.3s ease;
-    }
-    .filter-label:hover {
-        /* color: rgb(166, 166, 166); */
-        /* background: #222; */
-        opacity: 75%;
-    }
-    .filter-icon {
-        width: 12px;
-        height: 12px;
-        transition: transform 0.3s ease;
-    }
-    .filter-label select:focus + .filter-icon,
-    .filter-label select:active + .filter-icon {
-        transform: rotate(-180deg);
-    }
-
-    /* Select stylé */
-    .filter-label select {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background: transparent;
-        border: none;
-        color: #fff;
-        font-size: 14px;
-        padding-left: 5px;
-        cursor: pointer;
-        width: fit-content;
-    }
-    .filter-label option {
-        background-color: #373b3f;
-    }
-
-    th, td { padding-left: 10px; padding-right: 25px; }
     .listCards {
         margin: auto;
         display: grid;
@@ -86,21 +17,16 @@
     .carousel-item {
         display: none;
     }
-    /* .card {
-    }
-    .card:hover {
-    } */
     .cardPoster {
         position: relative;
         border-radius: 4%;
         border: solid 1px #666666;
         box-shadow: 0 5px 10px #14181c;
         margin: 2px;
-        /* height: fit-content; */
         width: fit-content;
     }
     .cardPoster:hover {
-        border: solid 3px #ffffff;
+        border: solid 2px #ffffff;
         margin: 0;
     }
     .poster{
@@ -112,24 +38,13 @@
         position: absolute;
     }
 
-
     .poster-actions button {
         background: none;
         border: none;
-        opacity: 0.4;
-        transition: opacity 0.2s, transform 0.2s;
     }
-
-    .poster-actions button.active {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-
-
     .poster-card {
         cursor: pointer;
     }
-
     .poster-actions {
         bottom: -100px;
         left: 50%;
@@ -139,34 +54,149 @@
         pointer-events: none;
         transition: opacity 0.3s ease;
     }
-
     .poster-card:hover .poster-actions {
         opacity: 80%;
         pointer-events: auto;
     }
-
+    .poster-actions button {
+        background: none;
+        border: none;
+        opacity: 0.75;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        cursor: pointer;
+    }
+    .poster-actions button:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    .poster-actions button.active {
+        opacity: 1;
+        transform: scale(1.15);
+    }
 </style>
 
-{% for message in app.flashes('success') %}
-    <div class="alert alert-success">
-        {{ message }}
-    </div>
-{% endfor %}
-
-{% set filterOptions = {
-    'type': types,
-    'country': countries,
-    'release_date': release_dates,
-    'platform': platforms,
-    'nb_season': nb_seasons,
-    'status': status,
+{% set categories = {
+    'Series': vu,
+    'Watchlist': watchlist,
+    'Watching': en_cours,
+    'Given up': abandonnee,
+    'Liked': like
 } %}
 
-<div>
+<div class="">
+    <p class="mb-5 text-center fs-1">Welcome back <span class="fw-bold">{{ user }}</span>. Here are your lists.</p>
+        {% for name, options in categories %}
+            <div class="my-5">
+                <h2 class="fw-normal mb-5">{{ name }}</h2>
+                {% if options == null %}
+                    <p class="text-center">You have no series hadded to this list. Add some <a href="{{ path('series_index') }}" >here</a></p>
+                {% else %}
+                    <div class="carousel-container position-relative">
+                        <div class="carousel-controls position-absolute top-50 start-50 translate-middle mx-auto w-100 d-flex justify-content-between align-items-center">
+                            <button id="prevBtn" class="btn btn-secondary rounded">←</button>
+                            <button id="nextBtn" class="btn btn-secondary rounded">→</button>
+                        </div>
+                        <ul class="listCards" id="carousel">
+                            {% for option in options %}
+                                <li class="bg-dark carousel-item" data-title="{{ option.serie.title|lower }}">
+                                    <article class="cardPoster">
+                                        <a href="{{ path('serie_show', { slug: option.serie.slug }) }}" class="position-relative poster-card">
+                                            <img class="poster" src={{ option.serie.posterUrl }} alt={`poster-{{ option.serie.slug }}`} />
+                                            <div class="bg-black rounded position-absolute poster-actions">
+                                                <div class="d-flex justify-content-around align-items-center gap-1 px-2 py-1">
+                                                    <button class="serie-action list-vu p-0" data-serie-id="{{ option.serie.id }}" data-list="vu">
+                                                        <svg style="width: 20px; height: 20px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                            <!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.-->
+                                                            <path d="M256 16a240 240 0 1 1 0 480 240 240 0 1 1 0-480zm0 496A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM357.7 197.7c3.1-3.1 3.1-8.2 0-11.3s-8.2-3.1-11.3 0L224 308.7l-58.3-58.3c-3.1-3.1-8.2-3.1-11.3 0s-3.1 8.2 0 11.3l64 64c3.1 3.1 8.2 3.1 11.3 0l128-128z"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="serie-action list-en_cours p-0" data-serie-id="{{ option.serie.id }}" data-list="en_cours">
+                                                        <svg style="width: 20px; height: 20px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                                            <!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.-->
+                                                            <path d="M426.1 301.2C406.2 376.5 337.6 432 256 432c-51 0-96.9-21.7-129-56.3l41-41c5.1-5.1 8-12.1 8-19.3c0-15.1-12.2-27.3-27.3-27.3H48c-8.8 0-16 7.2-16 16V404.7C32 419.8 44.2 432 59.3 432c7.2 0 14.2-2.9 19.3-8l25.7-25.7C142.3 438.7 196.2 464 256 464c97.4 0 179.2-67 201.8-157.4c2.4-9.7-5.2-18.6-15.2-18.6c-7.8 0-14.5 5.6-16.5 13.2zM385 136.3l-41 41c-5.1 5.1-8 12.1-8 19.3c0 15.1 12.2 27.3 27.3 27.3H464c8.8 0 16-7.2 16-16V107.3C480 92.2 467.8 80 452.7 80c-7.2 0-14.2 2.9-19.3 8l-25.7 25.7C369.7 73.3 315.8 48 256 48C158.6 48 76.8 115 54.2 205.4c-2.4 9.7 5.2 18.6 15.2 18.6c7.8 0 14.5-5.6 16.5-13.2C105.8 135.5 174.4 80 256 80c51 0 96.9 21.7 129.1 56.3zM448 192H374.6L448 118.6V192zM64 320h73.4L64 393.4V320z"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="serie-action list-watchlist p-0" data-serie-id="{{ option.serie.id }}" data-list="watchlist">
+                                                        <svg style="width: 20px; height: 20px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                                                            <!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.-->
+                                                            <path d="M112 0c8.8 0 16 7.2 16 16l0 48 192 0 0-48c0-8.8 7.2-16 16-16s16 7.2 16 16l0 48 32 0c35.3 0 64 28.7 64 64l0 32 0 32 0 .7c-5.3-.5-10.6-.7-16-.7s-10.7 .2-16 .7l0-.7L32 192l0 256c0 17.7 14.3 32 32 32l232.2 0c10 12.1 21.7 22.9 34.6 32L64 512c-35.3 0-64-28.7-64-64L0 192l0-32 0-32C0 92.7 28.7 64 64 64l32 0 0-48c0-8.8 7.2-16 16-16zM384 96L64 96c-17.7 0-32 14.3-32 32l0 32 384 0 0-32c0-17.7-14.3-32-32-32zm48 384a112 112 0 1 0 0-224 112 112 0 1 0 0 224zm0-256a144 144 0 1 1 0 288 144 144 0 1 1 0-288zm0 64c8.8 0 16 7.2 16 16l0 48 32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-48 0c-8.8 0-16-7.2-16-16l0-64c0-8.8 7.2-16 16-16z"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="serie-action list-abandon p-0" data-serie-id="{{ option.serie.id }}" data-list="abandonnee">
 
+                                                        <svg style="width: 20px; height: 20px;"  fill="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                                                            <path d="M218.6,24.2c-3.3-2-7.4-2.1-10.8-0.4c-8.7,4.5-17.3,8.3-34,8.3c-18.3,0-26.9-4.5-36.9-9.8c-11-5.8-23.4-12.4-47.2-12.4c-16.4,0-27.4,3.1-36.3,7c-1.6-4.1-5.6-7-10.3-7c-6.1,0-11.1,4.9-11.1,11.1v213.9c0,6.1,5,11.1,11.1,11.1c6.1,0,11.1-4.9,11.1-11.1v-90.5c9.4-4.9,18.1-9,35.5-9c18.3,0,26.9,4.5,36.9,9.8c11,5.8,23.4,12.3,47.2,12.3c21.6,0,33.6-5.3,44.1-10.7c3.7-1.9,6-5.7,6-9.8V33.7C223.9,29.8,221.9,26.2,218.6,24.2z M201.8,130c-7.1,3.1-15.1,5.4-28,5.4c-18.3,0-26.9-4.5-36.9-9.8c-11-5.8-23.4-12.3-47.2-12.3c-15.9,0-26.7,2.9-35.5,6.6V41.2c9.4-4.9,18.1-9,35.5-9c18.3,0,26.9,4.5,36.9,9.8c11,5.8,23.4,12.3,47.2,12.3c11.7,0,20.6-1.6,28-3.9V130z"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button class="serie-action list-liked p-0" data-serie-id="{{ option.serie.id }}" data-list="like">
+                                                        <svg style="width: 20px; height: 20px;" stroke="#fff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                            <path d="M12 5.881C12.981 4.729 14.484 4 16.05 4C18.822 4 21 6.178 21 8.95C21 12.3492 17.945 15.1195 13.3164 19.3167L13.305 19.327L12 20.515L10.695 19.336L10.6595 19.3037C6.04437 15.1098 3 12.3433 3 8.95C3 6.178 5.178 4 7.95 4C9.516 4 11.019 4.729 12 5.881Z" fill="#000000"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </article>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
 </div>
 
 <script>
+    // -------------------- Carrousel de séries --------------------
+    const itemsPerPage = 24;
+    let currentPage = 0;
+
+    function getItems() {
+        return document.querySelectorAll('.carousel-item');
+    }
+
+    function getTotalPages() {
+        return Math.ceil(getItems().length / itemsPerPage);
+    }
+
+    function updateButtonsVisibility() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const totalPages = getTotalPages();
+
+        prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+        nextBtn.style.visibility = currentPage >= totalPages - 1 ? 'hidden' : 'visible';
+    }
+
+    function showPage(page) {
+        const items = getItems();
+        const start = page * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        items.forEach((item, index) => {
+            item.style.display = (index >= start && index < end) ? 'block' : 'none';
+        });
+
+        updateButtonsVisibility();
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        const totalPages = getTotalPages();
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    showPage(currentPage);
+
 </script>
 
 {% endblock %}
