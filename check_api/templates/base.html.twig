@@ -51,7 +51,7 @@
                     <a href={{ path('serie_user_series_list') }} class="text-white mx-3">Series</a>
                     <a href={{ path('serie_user_watchlist') }} class="text-white mx-3">Watchlist</a>
                     <a href={{ path('serie_user_watching_list') }} class="text-white mx-3">Watching now</a>
-                    <a href={{ path('serie_user_abandon_list') }} class="text-white mx-3">Given up</a>
+                    <a href={{ path('serie_user_dropped_list') }} class="text-white mx-3">Given up</a>
                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('admin_index') }}" class="btn btn-primary mx-3">Admin board</a>
                     {% endif %}

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Serie;
+use App\Entity\UserSerie;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,28 +33,34 @@ final class SerieController extends AbstractController
     //         'series' => $series
     //     ]);
     // }
+
     #[Route("/", name: "series_index")]
     public function index(EntityManagerInterface $em): Response
     {
-        $series = $em->getRepository(Serie::class)->findAll(); // récupérer toutes les séries
-        $seriesRandom = $em->getRepository(Serie::class)->findAllRandom(); // récupérer toutes les séries dans un ordre random
-        $types = $em->getRepository(Serie::class)->findDistinctByField('type');
-        $countries = $em->getRepository(Serie::class)->findDistinctByField('country');
-        $release_dates = $em->getRepository(Serie::class)->findDistinctByField('platform');
-        $platforms = $em->getRepository(Serie::class)->findDistinctByField('release_date');
-        $nb_seasons = $em->getRepository(Serie::class)->findDistinctByField('nb_season');
-        $status = $em->getRepository(Serie::class)->findDistinctByField('status');
+        $user = $this->getUser();
+        $userSeriesStatus = [];
+
+        if ($user) {
+            $userSeries = $em->getRepository(UserSerie::class)->findBy(['user' => $user]);
+            foreach ($userSeries as $us) {
+                $userSeriesStatus[$us->getSerie()->getId()] = [
+                    'list' => $us->getList(), // "watched", "watching", "watchlist", "dropped"
+                    'liked' => $us->isLiked() // true / false
+                ];
+            }
+        }
 
         return $this->render('serie/index.html.twig', [
             'title' => 'CheckSérieBox',
-            'series' => $series,
-            'seriesRandom' => $seriesRandom,
-            'types' => $types,
-            'countries' => $countries,
-            'release_dates' => $release_dates,
-            'platforms' => $platforms,
-            'nb_seasons' => $nb_seasons,
-            'status' => $status,
+            'series' => $em->getRepository(Serie::class)->findAll(),
+            'seriesRandom' => $em->getRepository(Serie::class)->findAllRandom(),
+            'userSeriesStatus' => $userSeriesStatus,
+            'types' => $em->getRepository(Serie::class)->findDistinctByField('type'),
+            'countries' => $em->getRepository(Serie::class)->findDistinctByField('country'),
+            'release_dates' => $em->getRepository(Serie::class)->findDistinctByField('release_date'),
+            'platforms' => $em->getRepository(Serie::class)->findDistinctByField('platform'),
+            'nb_seasons' => $em->getRepository(Serie::class)->findDistinctByField('nb_season'),
+            'status' => $em->getRepository(Serie::class)->findDistinctByField('status')
         ]);
     }
 

@@ -1,8 +1,8 @@
 :root {
-    --vu: #6800D8;
-    --en_cours: #269E19;
+    --watched: #6800D8;
+    --watching: #269E19;
     --a_suivre: #B200BF;
     --watchlist: #001DD8;
-    --abandonnee: #D80004;
+    --dropped: #D80004;
     --like: #D87700;
 }

@@ -8,6 +8,15 @@ use App\Repository\UserSerieRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserSerieRepository::class)]
+#[ORM\Table(
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(
+            name: 'user_serie_unique',
+            columns: ['user_id', 'serie_id']
+        )
+    ]
+)]
+
 class UserSerie
 {
     #[ORM\Id]
@@ -23,11 +32,11 @@ class UserSerie
     #[ORM\JoinColumn(nullable: false)]
     private ?Serie $serie = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $list = null;
 
-    #[ORM\Column]
-    private ?bool $liked = null;
+    #[ORM\Column(nullable: true)]
+    private ?bool $liked = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $addedAt = null;
@@ -66,7 +75,7 @@ class UserSerie
         return $this->list;
     }
 
-    public function setList(string $list): static
+    public function setList(?string $list): static
     {
         $this->list = $list;
 

@@ -25,33 +25,36 @@ class UserSerieController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        $serieId = $data['serieId'] ?? null;
-        $list    = $data['list'] ?? null;
-
-        if (!$serieId || !$list) {
+        if (!isset($data['serieId'], $data['list'])) {
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
-        $serie = $em->getRepository(Serie::class)->find($serieId);
+        $serie = $em->getRepository(Serie::class)->find($data['serieId']);
 
         if (!$serie) {
             return new JsonResponse(['error' => 'Serie not found'], 404);
         }
 
         $repo = $em->getRepository(UserSerie::class);
-        $userSerie = $repo->findOneByUserAndSerie($user, $serie);
+        $userSerie = $repo->findOneBy([
+            'user' => $user,
+            'serie' => $serie,
+        ]);
 
-        // LIKE = cas à part
-        if ($list === 'like') {
-            if (!$userSerie) {
-                $userSerie = new UserSerie();
-                $userSerie->setUser($user);
-                $userSerie->setSerie($serie);
-                $userSerie->setAddedAt(new \DateTimeImmutable());
-                $em->persist($userSerie);
-            }
+        if (!$userSerie) {
+            $userSerie = new UserSerie();
+            $userSerie->setUser($user);
+            $userSerie->setSerie($serie);
+            $userSerie->setAddedAt(new \DateTimeImmutable());
+            $userSerie->setLiked(false); // IMPORTANT
+            $em->persist($userSerie);
+        }
 
-            $userSerie->setLiked(!$userSerie->isLiked());
+        // ====== LIKE ======
+        if ($data['list'] === 'like') {
+
+            $currentLike = $userSerie->isLiked() ?? false;
+            $userSerie->setLiked(!$currentLike);
             $em->flush();
 
             return new JsonResponse([
@@ -59,28 +62,21 @@ class UserSerieController extends AbstractController
             ]);
         }
 
-        // LISTES PRINCIPALES
-        if (!$userSerie) {
-            $userSerie = new UserSerie();
-            $userSerie->setUser($user);
-            $userSerie->setSerie($serie);
-            $userSerie->setAddedAt(new \DateTimeImmutable());
-            $em->persist($userSerie);
-        }
-
-        // toggle
-        if ($userSerie->getList() === $list) {
+        // ====== LISTES ======
+        if ($userSerie->getList() === $data['list']) {
             $userSerie->setList(null);
         } else {
-            $userSerie->setList($list);
+            $userSerie->setList($data['list']);
         }
 
         $em->flush();
+
 
         return new JsonResponse([
             'list' => $userSerie->getList()
         ]);
     }
+
 
 
     #[Route("/username", name: "serie_user_index")]
@@ -95,12 +91,12 @@ class UserSerieController extends AbstractController
         return $this->render('userserie/index.html.twig', [
             'title' => 'CheckSérieBox',
             'user' => $user->getUserIdentifier(),
-            'vu' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Vu'),
-            'en_cours' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'En cours'),
+            'watched' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'watched'),
+            'watching' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'watching'),
             // 'a_suivre' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'À suivre'),
-            'watchlist' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Watchlist'),
-            'abandonnee' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Abandonnée'),
-            'likes' => $em->getRepository(UserSerie::class)->findLikedByUser($user),
+            'watchlist' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'watchlist'),
+            'dropped' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'dropped'),
+            'liked' => $em->getRepository(UserSerie::class)->findLikedByUser($user),
         ]);
     }
 
@@ -131,7 +127,7 @@ class UserSerieController extends AbstractController
 
         return $this->render('userserie/index.html.twig', [
             'title' => 'CheckSérieBox',
-            'en_cours' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'En cours'),
+            'watching' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'watching'),
             // 'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
         ]);
     }
@@ -152,8 +148,8 @@ class UserSerieController extends AbstractController
         ]);
     }
 
-    #[Route("/username/abandon", name: "serie_user_abandon_list")]
-    public function abandon_list(EntityManagerInterface $em): Response
+    #[Route("/username/dropped", name: "serie_user_dropped_list")]
+    public function dropped_list(EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
@@ -163,7 +159,7 @@ class UserSerieController extends AbstractController
 
         return $this->render('userserie/index.html.twig', [
             'title' => 'CheckSérieBox',
-            'abandonnee' => $em->getRepository(UserSerie::class)->findByUserAndList($user, $user, 'Abandonnée'),
+            'dropped' => $em->getRepository(UserSerie::class)->findByUserAndList($user, $user, 'Abandonnée'),
             // 'like' => $em->getRepository(UserSerie::class)->findByUserAndList($user, 'Like'),
         ]);
     }
