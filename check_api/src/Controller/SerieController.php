@@ -188,7 +188,6 @@ final class SerieController extends AbstractController
         return $this->redirectToRoute('series_index');
     }
 
-
     #[Route('/api/series', name: 'api_series', methods: ['GET'])]
     public function apiSeries(Request $request, EntityManagerInterface $em): JsonResponse
     {
@@ -203,7 +202,22 @@ final class SerieController extends AbstractController
 
         $series = $em->getRepository(Serie::class)->findByFilters($filters);
 
-        return $this->json($series);
+        $data = array_map(function($serie) {
+            return [
+                'id' => $serie->getId(),
+                'title' => $serie->getTitle(),
+                'slug' => $serie->getSlug(),
+                'poster_url' => $serie->getPosterUrl(),
+                'type' => $serie->getType(),
+                'country' => $serie->getCountry(),
+                'release_date' => $serie->getReleaseDate(),
+                'platform' => $serie->getPlatform(),
+                'nb_season' => $serie->getNbSeason(),
+                'status' => $serie->getStatus(),
+            ];
+        }, $series);
+
+        return $this->json($data);
     }
 
 }
